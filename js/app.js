@@ -284,3 +284,188 @@ function toggleMobileNavigation() {
     );
 
 }
+
+'use strict';
+
+/* ==========================================================
+   18 BANI HASHIM
+   APP CORE INTEGRATION
+   Version : V1.0.0
+   ========================================================== */
+
+/* ==========================================================
+   BOOT APPLICATION
+========================================================== */
+
+document.addEventListener('DOMContentLoaded', bootApp);
+
+function bootApp() {
+
+    initCoreSystems();
+
+    connectModules();
+
+    hydrateUI();
+
+}
+
+/* ==========================================================
+   INIT CORE SYSTEMS
+========================================================== */
+
+function initCoreSystems() {
+
+    if (typeof initPWA === 'function') initPWA();
+
+    if (typeof initNotifications === 'function') initNotifications();
+
+    if (typeof initSearch === 'function') initSearch();
+
+    if (typeof initTheme === 'function') initTheme();
+
+    if (typeof startLiveMonitoring === 'function') startLiveMonitoring();
+
+}
+
+/* ==========================================================
+   CONNECT MODULES
+========================================================== */
+
+function connectModules() {
+
+    bindGlobalEvents();
+
+}
+
+/* ==========================================================
+   GLOBAL EVENTS
+========================================================== */
+
+function bindGlobalEvents() {
+
+    const watchBtn = document.getElementById('watchLiveButton');
+
+    if (watchBtn) {
+
+        watchBtn.addEventListener('click', () => {
+
+            const liveSection = document.getElementById('hero-live-section');
+
+            if (liveSection) {
+
+                liveSection.scrollIntoView({ behavior: 'smooth' });
+
+            }
+
+        });
+
+    }
+
+    const shareBtn = document.getElementById('shareLiveButton');
+
+    if (shareBtn) {
+
+        shareBtn.addEventListener('click', async () => {
+
+            try {
+
+                await navigator.share({
+
+                    title: document.title,
+
+                    url: location.href
+
+                });
+
+            } catch (e) {
+
+                console.log('Share cancelled');
+
+            }
+
+        });
+
+    }
+
+    const subscribeBtn = document.getElementById('subscribe-button');
+
+    if (subscribeBtn) {
+
+        subscribeBtn.addEventListener('click', () => {
+
+            subscribeBtn.classList.toggle('subscribed');
+
+            subscribeBtn.textContent =
+                subscribeBtn.classList.contains('subscribed')
+                    ? 'Subscribed'
+                    : 'Subscribe';
+
+        });
+
+    }
+
+}
+
+/* ==========================================================
+   HYDRATE UI FROM API
+========================================================== */
+
+async function hydrateUI() {
+
+    try {
+
+        if (typeof getChannelDetails === 'function') {
+
+            const data = await getChannelDetails();
+
+            updateChannelUI(data);
+
+        }
+
+        if (typeof getLatestVideos === 'function') {
+
+            await getLatestVideos();
+
+        }
+
+        if (typeof getPlaylists === 'function') {
+
+            await getPlaylists();
+
+        }
+
+    } catch (err) {
+
+        console.error('UI hydration failed:', err);
+
+    }
+
+}
+
+/* ==========================================================
+   CHANNEL UI UPDATE
+========================================================== */
+
+function updateChannelUI(data) {
+
+    const channel = data?.items?.[0];
+
+    if (!channel) return;
+
+    const stats = channel.statistics || {};
+
+    const snippet = channel.snippet || {};
+
+    const subs = document.getElementById('subscriber-count');
+
+    const videos = document.getElementById('video-count');
+
+    const desc = document.getElementById('channel-description');
+
+    if (subs) subs.textContent = stats.subscriberCount || '--';
+
+    if (videos) videos.textContent = stats.videoCount || '--';
+
+    if (desc) desc.textContent = snippet.description || '';
+
+}
