@@ -469,3 +469,95 @@ function updateChannelUI(data) {
     if (desc) desc.textContent = snippet.description || '';
 
 }
+
+'use strict';
+
+/* ==========================================================
+   18 BANI HASHIM
+   APP PATCH LAYER (STABILITY FIX)
+   Version : V1.0.1
+   ========================================================== */
+
+/* ==========================================================
+   SAFE BOOT WRAPPER
+========================================================== */
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    bootSafeApp();
+
+});
+
+/* ==========================================================
+   SAFE APP BOOT
+========================================================== */
+
+function bootSafeApp() {
+
+    try {
+
+        initPWA?.();
+
+        initNotifications?.();
+
+        initSearch?.();
+
+        initTheme?.();
+
+        startLiveMonitoring?.();
+
+        hydrateSafeUI();
+
+    } catch (err) {
+
+        console.error('APP BOOT ERROR:', err);
+
+    }
+
+}
+
+/* ==========================================================
+   SAFE UI HYDRATION WRAPPER
+========================================================== */
+
+async function hydrateSafeUI() {
+
+    try {
+
+        const channel = await getChannelDetails?.();
+
+        if (channel) updateChannelUI?.(channel);
+
+        await getLatestVideos?.();
+
+        await getPlaylists?.();
+
+    } catch (err) {
+
+        console.error('HYDRATION ERROR:', err);
+
+    }
+
+}
+
+/* ==========================================================
+   SAFE CLICK BINDINGS (GLOBAL)
+========================================================== */
+
+document.addEventListener('click', (e) => {
+
+    const videoCard = e.target.closest('.video-card');
+
+    if (videoCard) {
+
+        const id = videoCard.dataset.id;
+
+        if (id) {
+
+            window.location.href = `watch.html?id=${id}`;
+
+        }
+
+    }
+
+});
