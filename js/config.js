@@ -14,9 +14,9 @@ const CONFIG = {
 
     YOUTUBE: {
 
-        API_KEY: '',
+        API_KEY: 'AIzaSyCoM4meZeWK-p6h35dNsU9UXYYGhMJryRI',
 
-        CHANNEL_ID: '',
+        CHANNEL_ID: 'UC2Pl7NZVhYAI3FMgl61KJSQ',
 
         BASE_URL: 'https://www.googleapis.com/youtube/v3',
 
