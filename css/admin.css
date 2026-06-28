@@ -1,0 +1,89 @@
+/* ==========================================================
+   18 BANI HASHIM
+   ADMIN DASHBOARD UI
+   Version : V1.0.0
+   ========================================================== */
+
+#admin-dashboard{
+
+    padding:24px;
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+
+    gap:20px;
+
+}
+
+/* ==========================================================
+   ADMIN CARD
+========================================================== */
+
+.admin-card{
+
+    padding:22px;
+
+    border-radius:20px;
+
+    background:rgba(255,255,255,0.05);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    backdrop-filter:blur(20px);
+
+    box-shadow:0 20px 60px rgba(0,0,0,0.35);
+
+    transition:transform .25s ease, box-shadow .25s ease;
+
+}
+
+.admin-card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:0 25px 70px rgba(0,0,0,0.45);
+
+}
+
+/* ==========================================================
+   TITLE
+========================================================== */
+
+.admin-card h2{
+
+    font-size:1.4rem;
+
+    margin-bottom:14px;
+
+    color:#fff;
+
+}
+
+/* ==========================================================
+   TEXT STATS
+========================================================== */
+
+.admin-card p{
+
+    font-size:1rem;
+
+    margin:8px 0;
+
+    color:rgba(255,255,255,0.75);
+
+}
+
+/* ==========================================================
+   GRID LAYOUT VARIANTS (for future expansion)
+========================================================== */
+
+.admin-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
+
+    gap:16px;
+
+}
