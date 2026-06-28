@@ -1,1 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        http-equiv="X-UA-Compatible"
+        content="IE=edge">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+    <meta
+        name="theme-color"
+        content="#09090b">
+
+    <meta
+        name="color-scheme"
+        content="dark">
+
+    <meta
+        name="robots"
+        content="index,follow">
+
+    <meta
+        name="author"
+        content="Ghazi Abbas">
+
+    <title>
+        18 BANI HASHIM
+    </title>
+
+    <meta
+        name="description"
+        content="Official Islamic Media Platform featuring Live Majlis, Videos, Shorts and Playlists.">
+
+    <link
+        rel="manifest"
+        href="manifest.json">
+
+    <link
+        rel="stylesheet"
+        href="css/style.css">
+
+    <link
+        rel="stylesheet"
+        href="css/themes.css">
+
+    <link
+        rel="stylesheet"
+        href="css/responsive.css">
+
+    <script
+        src="js/config.js"
+        defer></script>
+
+    <script
+        src="js/utils.js"
+        defer></script>
+
+    <script
+        src="js/api.js"
+        defer></script>
+
+    <script
+        src="js/live.js"
+        defer></script>
+
+    <script
+        src="js/search.js"
+        defer></script>
+
+    <script
+        src="js/themes.js"
+        defer></script>
+
+    <script
+        src="js/app.js"
+        defer></script>
+
+</head>
+
+<body class="theme-midnight">
+
+<div id="app-shell">
+
+    <!-- Background -->
+
+    <div id="aurora-background"></div>
+
+    <div id="particles-background"></div>
+
+    <div id="cursor-glow"></div>
+
+    <!-- Splash Loader -->
+
+    <div
+        id="page-loader"
+        class="page-loader">
+
+        <div class="loader-wrapper">
+
+            <div class="loader-logo">
+
+                <img
+                    src="assets/logos/logo.svg"
+                    alt="18 BANI HASHIM">
+
+            </div>
+
+            <h1 class="loader-title">
+
+                18 BANI HASHIM
+
+            </h1>
+
+            <div class="loader-progress">
+
+                <span class="loader-bar"></span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Application -->
+
+    <main id="app-container">
+
+              <!-- ===================================================== -->
+        <!-- PREMIUM GLASS HEADER                                  -->
+        <!-- ===================================================== -->
+
+        <header
+            id="site-header"
+            class="site-header">
+
+            <div class="header-blur-layer"></div>
+
+            <div class="header-container">
+
+                <a
+                    href="index.html"
+                    id="brand-link"
+                    class="brand-link"
+                    aria-label="18 BANI HASHIM">
+
+                    <div class="brand-logo-wrapper">
+
+                        <img
+                            src="assets/logos/logo.svg"
+                            alt="18 BANI HASHIM"
+                            class="brand-logo"
+                            width="54"
+                            height="54"
+                            loading="eager"
+                            decoding="async">
+
+                    </div>
+
+                    <div class="brand-details">
+
+                        <div class="brand-title-row">
+
+                            <h1 class="brand-title">
+
+                                18 BANI HASHIM
+
+                            </h1>
+
+                            <span
+                                class="verified-badge"
+                                aria-label="Verified Channel">
+
+                                <svg
+                                    class="verified-icon"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2">
+
+                                    <path
+                                        d="M9 12.8l2.2 2.2L16.8 9.4"/>
+
+                                    <path
+                                        d="M12 2l2.3 2.2 3.2-.4 1 3.1 3 1.5-1.1 3 1.1 3-3 1.5-1 3.1-3.2-.4L12 22l-2.3-2.2-3.2.4-1-3.1-3-1.5 1.1-3-1.1-3 3-1.5 1-3.1 3.2.4z"/>
+
+                                </svg>
+
+                            </span>
+
+                        </div>
+
+                        <div class="brand-meta">
+
+                            <span
+                                id="header-live-badge"
+                                class="header-live-badge"
+                                hidden>
+
+                                <span class="live-dot"></span>
+
+                                LIVE
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+                <div class="header-search-area">
+
+                    <button
+                        id="headerSearchButton"
+                        class="header-icon-button"
+                        type="button"
+                        aria-label="Open Search">
+
+                        <svg
+                            class="header-icon"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2">
+
+                            <circle
+                                cx="11"
+                                cy="11"
+                                r="7"></circle>
+
+                            <path
+                                d="M20 20L16.6 16.6"></path>
+
+                        </svg>
+
+                    </button>
+
+                </div>
+
+                <div class="header-actions">
+
+                    <button
+                        id="notificationButton"
+                        class="header-icon-button"
+                        type="button"
+                        aria-label="Notifications">
+
+                        <svg
+                            class="header-icon"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2">
+
+                            <path
+                                d="M18 16V11a6 6 0 10-12 0v5L4 18h16z"></path>
+
+                            <path
+                                d="M10 21a2 2 0 004 0"></path>
+
+                        </svg>
+
+                        <span
+                            id="notificationCounter"
+                            class="notification-counter"
+                            hidden>
+
+                            0
+
+                        </span>
+
+                    </button>
+
+                    <button
+                        id="themeSwitcherButton"
+                        class="header-icon-button"
+                        type="button"
+                        aria-label="Change Theme">
+
+                        <svg
+                            class="header-icon"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2">
+
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="4"></circle>
+
+                            <path
+                                d="M12 2v2"></path>
+
+                            <path
+                                d="M12 20v2"></path>
+
+                            <path
+                                d="M2 12h2"></path>
+
+                            <path
+                                d="M20 12h2"></path>
+
+                            <path
+                                d="M4.9 4.9l1.4 1.4"></path>
+
+                            <path
+                                d="M17.7 17.7l1.4 1.4"></path>
+
+                            <path
+                                d="M17.7 6.3l1.4-1.4"></path>
+
+                            <path
+                                d="M4.9 19.1l1.4-1.4"></path>
+
+                        </svg>
+
+                    </button>
+
+                    <button
+                        id="mobileMenuButton"
+                        class="header-icon-button mobile-menu-button"
+                        type="button"
+                        aria-label="Open Navigation"
+                        aria-expanded="false">
+
+                        <svg
+                            class="header-icon"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2">
+
+                            <path d="M3 6H21"></path>
+                            <path d="M3 12H21"></path>
+                            <path d="M3 18H21"></path>
+
+                        </svg>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- ===================================================== -->
+        <!-- LIVE NOTICE                                            -->
+        <!-- ===================================================== -->
+
+        <section
+            id="liveNotice"
+            class="live-notice"
+            hidden>
+
+            <div class="live-notice-card">
+
+                <div class="live-notice-status">
+
+                    <span class="live-dot"></span>
+
+                    <span class="live-text">
+
+                        LIVE NOW
+
+                    </span>
+
+                </div>
+
+                <div class="live-notice-body">
+
+                    <h2
+                        id="liveNoticeTitle">
+
+                    </h2>
+
+                    <p
+                        id="liveNoticeMessage">
+
+                    </p>
+
+                </div>
+
+                <div class="live-notice-actions">
+
+                    <button
+                        id="watchLiveButton"
+                        class="primary-button"
+                        type="button">
+
+                        Watch Live
+
+                    </button>
+
+                    <button
+                        id="dismissLiveNotice"
+                        class="secondary-button"
+                        type="button">
+
+                        Dismiss
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+              <!-- ===================================================== -->
+        <!-- CHANNEL BANNER                                        -->
+        <!-- ===================================================== -->
+
+        <section
+            id="channel-banner-section"
+            class="channel-banner-section"
+            aria-label="Channel Banner">
+
+            <div class="channel-banner">
+
+                <img
+                    src="assets/banners/channel-banner.webp"
+                    alt="18 BANI HASHIM Banner"
+                    class="channel-banner-image"
+                    width="1600"
+                    height="520"
+                    fetchpriority="high"
+                    loading="eager"
+                    decoding="async">
+
+                <div class="channel-banner-overlay"></div>
+
+            </div>
+
+        </section>
+
+        <!-- ===================================================== -->
+        <!-- CHANNEL INFORMATION CARD                              -->
+        <!-- ===================================================== -->
+
+        <section
+            id="channel-card-section"
+            class="channel-card-section">
+
+            <div class="channel-card glass">
+
+                <div class="channel-card-left">
+
+                    <div class="channel-avatar">
+
+                        <img
+                            src="assets/logos/logo.svg"
+                            alt="18 BANI HASHIM Logo"
+                            width="140"
+                            height="140"
+                            loading="eager">
+
+                    </div>
+
+                    <div class="channel-information">
+
+                        <div class="channel-heading">
+
+                            <h2 id="channel-name">
+
+                                18 BANI HASHIM
+
+                            </h2>
+
+                            <span
+                                class="verified-badge"
+                                aria-label="Verified Channel">
+
+                                <svg
+                                    class="verified-icon"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2">
+
+                                    <path d="M9 12.8l2.2 2.2L16.8 9.4"></path>
+
+                                    <path d="M12 2l2.3 2.2 3.2-.4 1 3.1 3 1.5-1.1 3 1.1 3-3 1.5-1 3.1-3.2-.4L12 22l-2.3-2.2-3.2.4-1-3.1-3-1.5 1.1-3-1.1-3 3-1.5 1-3.1 3.2.4z"></path>
+
+                                </svg>
+
+                            </span>
+
+                        </div>
+
+                        <div class="channel-statistics">
+
+                            <div class="channel-stat">
+
+                                <span class="stat-label">
+
+                                    Subscribers
+
+                                </span>
+
+                                <strong
+                                    id="subscriber-count">
+
+                                    --
+
+                                </strong>
+
+                            </div>
+
+                            <div class="channel-stat">
+
+                                <span class="stat-label">
+
+                                    Videos
+
+                                </span>
+
+                                <strong
+                                    id="video-count">
+
+                                    --
+
+                                </strong>
+
+                            </div>
+
+                            <div class="channel-stat">
+
+                                <span class="stat-label">
+
+                                    Joined
+
+                                </span>
+
+                                <strong
+                                    id="joined-date">
+
+                                    --
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                        <p
+                            id="channel-description"
+                            class="channel-description">
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="channel-card-right">
+
+                    <button
+                        id="subscribe-button"
+                        class="primary-button"
+                        type="button">
+
+                        Subscribe
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ===================================================== -->
+        <!-- MAIN NAVIGATION                                       -->
+        <!-- ===================================================== -->
+
+        <nav
+            id="main-navigation"
+            class="main-navigation"
+            aria-label="Primary Navigation">
+
+            <a
+                href="index.html"
+                class="navigation-item active">
+
+                <span>Home</span>
+
+            </a>
+
+            <a
+                href="videos.html"
+                class="navigation-item">
+
+                <span>Videos</span>
+
+            </a>
+
+            <a
+                href="shorts.html"
+                class="navigation-item">
+
+                <span>Shorts</span>
+
+            </a>
+
+            <a
+                href="playlist.html"
+                class="navigation-item">
+
+                <span>Playlists</span>
+
+            </a>
+
+            <a
+                href="about.html"
+                class="navigation-item">
+
+                <span>About</span>
+
+            </a>
+
+        </nav>
+
+        <!-- ===================================================== -->
+        <!-- HERO LIVE PLAYER STARTS HERE                          -->
+        <!-- ===================================================== -->
+
+        <section
+            id="hero-live-section"
+            class="hero-live-section"
+            hidden>
+
+            <div class="hero-player-container">
+
+                <div
+                    id="hero-player"
+                    class="hero-player">
+
+                </div>
+
+                <div class="hero-player-details">
+
+                    <div class="hero-live-status">
+
+                        <span class="live-dot"></span>
+
+                        <span>
+
+                            LIVE
+
+                        </span>
+
+                    </div>
+
+                    <h2
+                        id="hero-live-title">
+
+                    </h2>
+
+                    <div class="hero-live-meta">
+
+                        <span
+                            id="hero-live-viewers">
+
+                        </span>
+
+                        <span
+                            id="hero-live-time">
+
+                        </span>
+
+                    </div>
+
+                    <div class="hero-live-actions">
+
+                        <button
+                            id="watchWebsiteButton"
+                            class="primary-button">
+
+                            Watch Now
+
+                        </button>
+
+                        <button
+                            id="shareLiveButton"
+                            class="secondary-button">
+
+                            Share
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+      
