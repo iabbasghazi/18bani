@@ -8,11 +8,11 @@
 
 const API = {
 
-    baseURL: 'https://www.googleapis.com/youtube/v3',
+    baseURL: CONFIG.YOUTUBE.BASE_URL,
 
-    key: '',
+    key: CONFIG.YOUTUBE.API_KEY,
 
-    channelId: 'YOUR_CHANNEL_ID',
+    channelId: CONFIG.YOUTUBE.CHANNEL_ID,
 
     cache: new Map()
 
