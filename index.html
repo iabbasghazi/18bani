@@ -3,83 +3,266 @@
 
 <head>
 
+    <!-- ==========================================================
+         BASIC META
+    =========================================================== -->
+
     <meta charset="UTF-8">
 
     <meta
+        http-equiv="X-UA-Compatible"
+        content="IE=edge">
+
+    <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+        content="width=device-width,
+        initial-scale=1,
+        viewport-fit=cover">
 
     <meta
         name="theme-color"
-        content="#09090b">
+        content="#050505">
 
     <meta
         name="color-scheme"
         content="dark">
 
     <meta
+        name="robots"
+        content="index,follow">
+
+    <meta
+        name="author"
+        content="Ghazi Abbas">
+
+    <!-- ==========================================================
+         SEO
+    =========================================================== -->
+
+    <title>
+
+        18 BANI HASHIM
+
+    </title>
+
+    <meta
         name="description"
-        content="18 BANI HASHIM Official Islamic Media Platform">
+        content="Official 18 BANI HASHIM Islamic Media Platform featuring Live Majlis, Videos, Shorts, Playlists, Islamic Calendar and Premium Experience.">
 
-    <title>18 BANI HASHIM</title>
+    <meta
+        name="keywords"
+        content="18 BANI HASHIM, Islamic, Shia, Majlis, Live, Muharram, Karbala, YouTube">
 
-    <link rel="manifest" href="manifest.json">
+    <!-- ==========================================================
+         OPEN GRAPH
+    =========================================================== -->
 
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/themes.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <meta
+        property="og:type"
+        content="website">
+
+    <meta
+        property="og:title"
+        content="18 BANI HASHIM">
+
+    <meta
+        property="og:description"
+        content="Official Islamic Media Platform">
+
+    <meta
+        property="og:image"
+        content="assets/logos/logo.png">
+
+    <!-- ==========================================================
+         PWA
+    =========================================================== -->
+
+    <link
+        rel="manifest"
+        href="manifest.json">
+
+    <link
+        rel="apple-touch-icon"
+        href="assets/logos/logo.png">
+
+    <!-- ==========================================================
+         FAVICON
+    =========================================================== -->
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="assets/logos/logo.png">
+
+    <!-- ==========================================================
+         GOOGLE FONTS
+    =========================================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- ==========================================================
+         CSS
+    =========================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="css/style.css">
+
+    <link
+        rel="stylesheet"
+        href="css/themes.css">
+
+    <link
+        rel="stylesheet"
+        href="css/responsive.css">
+
+    <link
+        rel="stylesheet"
+        href="css/loader.css">
+
+    <link
+        rel="stylesheet"
+        href="css/header.css">
+
+    <link
+        rel="stylesheet"
+        href="css/home.css">
+
+    <!-- ==========================================================
+         JS
+    =========================================================== -->
+
+    <script
+        src="js/config.js"
+        defer></script>
+
+    <script
+        src="js/utils.js"
+        defer></script>
+
+    <script
+        src="js/api.js"
+        defer></script>
+
+    <script
+        src="js/live.js"
+        defer></script>
+
+    <script
+        src="js/search.js"
+        defer></script>
+
+    <script
+        src="js/themes.js"
+        defer></script>
+
+    <script
+        src="js/app.js"
+        defer></script>
 
 </head>
 
-<body class="theme-midnight">
+<body
+    class="theme-midnight">
 
-<div id="app-shell">
+<!-- ==========================================================
+     APP SHELL
+=========================================================== -->
 
-    <!-- Aurora -->
+<div
+    id="app-shell">
 
-    <div id="aurora-background"></div>
+    <!-- ======================================================
+         PREMIUM BACKGROUND
+    ======================================================= -->
 
-    <div id="particles-background"></div>
+    <div
+        id="aurora-background"></div>
 
-    <div id="cursor-glow"></div>
+    <div
+        id="particles-background"></div>
 
-    <!-- =====================================================
-         SPLASH LOADER
-    ===================================================== -->
+    <div
+        id="cursor-glow"></div>
+
+    <!-- ======================================================
+         PAGE LOADER
+    ======================================================= -->
 
     <div
         id="page-loader"
         class="page-loader">
 
-        <div class="loader-content">
+        <div
+            class="loader-wrapper">
 
-            <div class="loader-logo-ring">
+            <!-- Animated Border -->
 
-                <img
-                    src="assets/logos/logo.svg"
-                    alt="18 BANI HASHIM"
-                    id="loader-logo">
+            <div
+                class="loader-ring">
+
+                <div
+                    class="loader-ring-inner">
+
+                    <img
+                        id="loader-logo"
+                        src="assets/logos/logo.png"
+                        alt="18 BANI HASHIM"
+
+                        onerror="
+                        this.onerror=null;
+                        this.src='assets/logos/logo.svg';
+                        ">
+
+                </div>
 
             </div>
 
-            <h1>
+            <!-- Title -->
+
+            <h1
+                class="loader-title">
 
                 18 BANI HASHIM
 
             </h1>
 
-            <p>
+            <!-- Subtitle -->
 
-                Islamic Media Platform
+            <p
+                class="loader-subtitle">
+
+                Official Islamic Media Platform
 
             </p>
 
-            <div class="loader-progress">
+            <!-- Loading -->
+
+            <div
+                class="loader-progress">
 
                 <span
-                    id="loader-progress-bar">
+                    class="loader-progress-bar"></span>
 
-                </span>
+            </div>
+
+            <!-- Percentage -->
+
+            <div
+                id="loader-percent">
+
+                0%
 
             </div>
 
@@ -87,219 +270,640 @@
 
     </div>
 
-    <!-- =====================================================
-         APP
-    ===================================================== -->
+    <!-- ======================================================
+         MAIN APPLICATION
+    ======================================================= -->
 
-    <main id="app-container">
+    <main
+        id="app-container">
 
-        <!-- =====================================================
-             PREMIUM HEADER
-        ===================================================== -->
+                <!-- ======================================================
+             PREMIUM GLASS HEADER
+        ======================================================= -->
 
-        <header id="site-header">
+        <header
+            id="site-header"
+            class="site-header">
 
-            <div class="header-left">
+            <!-- Aurora Glass Layer -->
+
+            <div class="header-glass-layer"></div>
+
+            <div class="header-container">
+
+                <!-- ==========================================
+                     BRAND
+                =========================================== -->
 
                 <a
                     href="index.html"
-                    class="brand">
+                    id="brand-link"
+                    class="brand-link"
+                    aria-label="18 BANI HASHIM">
 
-                    <img
-                        src="assets/logos/logo.svg"
-                        id="site-logo"
-                        alt="Logo">
+                    <div class="brand-logo-wrapper">
 
-                    <div>
+                        <div class="logo-glow-ring"></div>
 
-                        <h1>
+                        <img
+                            id="header-logo"
+                            class="brand-logo"
+                            src="assets/logos/logo.png"
+                            alt="18 BANI HASHIM"
 
-                            18 BANI HASHIM
+                            onerror="
+                            this.onerror=null;
+                            this.src='assets/logos/logo.svg';
+                            ">
 
-                        </h1>
+                    </div>
 
-                        <small>
+                    <div class="brand-content">
 
-                            Official Islamic Channel
+                        <div class="brand-top-row">
 
-                        </small>
+                            <h1
+                                class="brand-title">
+
+                                18 BANI HASHIM
+
+                            </h1>
+
+                            <!-- Official Verified -->
+
+                            <span
+                                class="official-verified-badge"
+                                title="Official Verified">
+
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="currentColor">
+
+                                    <path d="M12 2l2.6 2 3.3-.4.9 3.2L22 8.5l-1.7 3 1.7 3-3.2 1.7-.9 3.2-3.3-.4L12 22l-2.6-2-3.3.4-.9-3.2L2 14.5l1.7-3L2 8.5l3.2-1.7.9-3.2 3.3.4L12 2Zm-1.2 13.1 5.1-5.1-1.3-1.3-3.8 3.8-1.7-1.7-1.3 1.3 3 3Z"/>
+
+                                </svg>
+
+                            </span>
+
+                        </div>
+
+                        <div class="brand-bottom-row">
+
+                            <span
+                                class="brand-username">
+
+                                @18BaniHashim
+
+                            </span>
+
+                            <span
+                                id="header-live-badge"
+                                class="header-live-badge"
+                                hidden>
+
+                                <span class="live-dot"></span>
+
+                                LIVE
+
+                            </span>
+
+                        </div>
 
                     </div>
 
                 </a>
 
-            </div>
+                <!-- ==========================================
+                     SEARCH
+                =========================================== -->
 
-            <div class="header-center">
-
-                <div class="search-box">
-
-                    <input
-                        id="searchInput"
-                        type="search"
-                        placeholder="Search videos...">
+                <div class="header-search">
 
                     <button
-                        id="searchButton">
+                        id="headerSearchButton"
+                        class="header-action-button"
+                        aria-label="Search">
 
-                        🔍
+                        <svg
+                            width="22"
+                            height="22"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2">
+
+                            <circle
+                                cx="11"
+                                cy="11"
+                                r="7"></circle>
+
+                            <path
+                                d="M20 20L16.6 16.6"></path>
+
+                        </svg>
 
                     </button>
 
                 </div>
 
-            </div>
+                <!-- ==========================================
+                     ACTIONS
+                =========================================== -->
 
-            <div class="header-right">
+                <div class="header-actions">
 
-                <button
-                    id="notificationButton">
+                    <!-- Notification -->
 
-                    🔔
+                    <button
+                        id="notificationButton"
+                        class="header-action-button"
+                        aria-label="Notifications">
 
-                </button>
+                        <svg
+                            width="22"
+                            height="22"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2">
 
-                <button
-                    id="themeSwitcherButton">
+                            <path
+                                d="M18 16V11a6 6 0 10-12 0v5L4 18h16z"></path>
 
-                    🌙
+                            <path
+                                d="M10 21a2 2 0 004 0"></path>
 
-                </button>
+                        </svg>
 
-                <button
-                    id="mobileMenuButton">
+                        <span
+                            id="notificationCounter"
+                            class="notification-counter"
+                            hidden>
 
-                    ☰
+                            0
 
-                </button>
+                        </span>
+
+                    </button>
+
+                    <!-- Theme -->
+
+                    <button
+                        id="themeSwitcherButton"
+                        class="header-action-button"
+                        aria-label="Change Theme">
+
+                        <svg
+                            width="22"
+                            height="22"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2">
+
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="4"></circle>
+
+                            <path d="M12 2v2"></path>
+                            <path d="M12 20v2"></path>
+                            <path d="M2 12h2"></path>
+                            <path d="M20 12h2"></path>
+                            <path d="M5 5l1.5 1.5"></path>
+                            <path d="M17.5 17.5L19 19"></path>
+                            <path d="M19 5l-1.5 1.5"></path>
+                            <path d="M5 19l1.5-1.5"></path>
+
+                        </svg>
+
+                    </button>
+
+                    <!-- Mobile Menu -->
+
+                    <button
+                        id="mobileMenuButton"
+                        class="header-action-button"
+                        aria-label="Menu"
+                        aria-expanded="false">
+
+                        <svg
+                            width="22"
+                            height="22"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2">
+
+                            <path d="M3 6H21"></path>
+
+                            <path d="M3 12H21"></path>
+
+                            <path d="M3 18H21"></path>
+
+                        </svg>
+
+                    </button>
+
+                </div>
 
             </div>
 
         </header>
 
-                <!-- =====================================================
+        <!-- ======================================================
+             SEARCH OVERLAY
+        ======================================================= -->
+
+        <section
+            id="searchOverlay"
+            class="search-overlay"
+            hidden>
+
+            <div class="search-overlay-backdrop"></div>
+
+            <div class="search-box">
+
+                <input
+                    id="searchInput"
+                    type="search"
+                    placeholder="Search Videos, Live, Shorts..."
+
+                    autocomplete="off">
+
+                <button
+                    id="closeSearchButton">
+
+                    ✕
+
+                </button>
+
+            </div>
+
+            <div
+                id="searchResults"
+                class="search-results">
+
+            </div>
+
+        </section>
+
+                <!-- ======================================================
+             MOBILE DRAWER
+        ======================================================= -->
+
+        <aside
+            id="mobileDrawer"
+            class="mobile-drawer"
+            hidden>
+
+            <div
+                id="drawerBackdrop"
+                class="drawer-backdrop"></div>
+
+            <div
+                class="drawer-panel">
+
+                <!-- Drawer Header -->
+
+                <div class="drawer-header">
+
+                    <div class="drawer-profile">
+
+                        <img
+                            src="assets/logos/logo.png"
+                            alt="18 BANI HASHIM"
+
+                            onerror="
+                            this.onerror=null;
+                            this.src='assets/logos/logo.svg';
+                            ">
+
+                        <div>
+
+                            <h2>
+
+                                18 BANI HASHIM
+
+                            </h2>
+
+                            <span>
+
+                                Official Islamic Media
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        id="closeDrawerButton"
+                        class="drawer-close">
+
+                        ✕
+
+                    </button>
+
+                </div>
+
+                <!-- Navigation -->
+
+                <nav class="drawer-navigation">
+
+                    <a
+                        href="index.html"
+                        class="drawer-link active">
+
+                        Home
+
+                    </a>
+
+                    <a
+                        href="videos.html"
+                        class="drawer-link">
+
+                        Videos
+
+                    </a>
+
+                    <a
+                        href="shorts.html"
+                        class="drawer-link">
+
+                        Shorts
+
+                    </a>
+
+                    <a
+                        href="playlist.html"
+                        class="drawer-link">
+
+                        Playlists
+
+                    </a>
+
+                    <a
+                        href="live.html"
+                        class="drawer-link">
+
+                        Live
+
+                    </a>
+
+                    <a
+                        href="about.html"
+                        class="drawer-link">
+
+                        About
+
+                    </a>
+
+                </nav>
+
+                <!-- Divider -->
+
+                <div class="drawer-divider"></div>
+
+                <!-- Theme -->
+
+                <div class="drawer-section">
+
+                    <h3>
+
+                        Appearance
+
+                    </h3>
+
+                    <button
+                        id="drawerThemeButton"
+                        class="drawer-theme-button">
+
+                        Change Theme
+
+                    </button>
+
+                </div>
+
+                <!-- Divider -->
+
+                <div class="drawer-divider"></div>
+
+                <!-- Official Accounts -->
+
+                <div class="drawer-section">
+
+                    <h3>
+
+                        ✔ Official Accounts
+
+                    </h3>
+
+                    <p>
+
+                        All social links verified by
+                        <strong>18 BANI HASHIM</strong>
+
+                    </p>
+
+                    <div class="drawer-social-grid">
+
+                        <a
+                            href="instagram.html"
+                            class="social-card">
+
+                            <span class="social-name">
+
+                                Instagram
+
+                            </span>
+
+                            <span class="verified-mini">
+
+                                ✔
+
+                            </span>
+
+                        </a>
+
+                        <a
+                            href="facebook.html"
+                            class="social-card">
+
+                            <span class="social-name">
+
+                                Facebook
+
+                            </span>
+
+                            <span class="verified-mini">
+
+                                ✔
+
+                            </span>
+
+                        </a>
+
+                        <a
+                            href="x.html"
+                            class="social-card">
+
+                            <span class="social-name">
+
+                                X
+
+                            </span>
+
+                            <span class="verified-mini">
+
+                                ✔
+
+                            </span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+        <!-- ======================================================
+             NOTIFICATION PANEL
+        ======================================================= -->
+
+        <aside
+            id="notificationPanel"
+            class="notification-panel"
+            hidden>
+
+            <div class="notification-header">
+
+                <h2>
+
+                    Notifications
+
+                </h2>
+
+                <button
+                    id="closeNotificationPanel">
+
+                    ✕
+
+                </button>
+
+            </div>
+
+            <div
+                id="notificationList">
+
+                <!-- Dynamic Notifications -->
+
+            </div>
+
+        </aside>
+
+        <!-- ======================================================
+             PAGE CONTENT START
+        ======================================================= -->
+
+        <section
+            id="home-page">
+
+                    <!-- ======================================================
              PREMIUM CHANNEL HERO
-        ===================================================== -->
+        ======================================================= -->
 
         <section
             id="channel-hero"
             class="channel-hero">
 
-            <div class="channel-hero-glow"></div>
+            <div class="hero-glow-bg"></div>
 
-            <div class="channel-hero-content">
+            <div class="channel-hero-card glass">
 
-                <!-- Left -->
+                <!-- LEFT -->
 
                 <div class="channel-left">
 
-                    <div class="channel-logo-wrapper">
+                    <div class="channel-avatar-wrapper">
 
-                        <div class="logo-ring"></div>
+                        <div class="avatar-ring"></div>
 
                         <img
-                            src="assets/logos/logo.svg"
+                            id="channelLogo"
+                            class="channel-avatar"
+                            src="assets/logos/logo.png"
                             alt="18 BANI HASHIM"
-                            id="channel-logo">
+
+                            onerror="
+                            this.onerror=null;
+                            this.src='assets/logos/logo.svg';
+                            ">
 
                     </div>
 
-                </div>
+                    <div class="channel-details">
 
-                <!-- Center -->
+                        <div class="channel-title-row">
 
-                <div class="channel-center">
+                            <h1
+                                id="channel-name">
 
-                    <div class="channel-title-row">
+                                18 BANI HASHIM
 
-                        <h2 id="channel-name">
+                            </h1>
 
-                            18 BANI HASHIM
+                            <span
+                                class="official-verified-badge">
 
-                        </h2>
+                                <!-- Premium SVG -->
 
-                        <span class="verified-badge">
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    width="22"
+                                    height="22"
+                                    fill="currentColor">
 
-                            ✓
+                                    <path d="M12 2l2.6 2 3.3-.4.9 3.2L22 8.5l-1.7 3 1.7 3-3.2 1.7-.9 3.2-3.3-.4L12 22l-2.6-2-3.3.4-.9-3.2L2 14.5l1.7-3L2 8.5l3.2-1.7.9-3.2 3.3.4L12 2Zm-1.1 13.2 5-5-1.3-1.3-3.7 3.7-1.8-1.8-1.3 1.3 3.1 3.1Z"/>
 
-                        </span>
-
-                    </div>
-
-                    <p
-                        id="channel-handle">
-
-                        @18BaniHashim
-
-                    </p>
-
-                    <div class="channel-stats">
-
-                        <div class="stat-box">
-
-                            <strong
-                                id="subscriber-count">
-
-                                --
-
-                            </strong>
-
-                            <span>
-
-                                Subscribers
+                                </svg>
 
                             </span>
 
                         </div>
 
-                        <div class="stat-box">
+                        <div class="channel-username">
 
-                            <strong
-                                id="video-count">
+                            @18BaniHashim
 
-                                --
+                        </div>
 
-                            </strong>
+                        <div
+                            id="channel-description"
+                            class="channel-description">
 
-                            <span>
-
-                                Videos
-
-                            </span>
+                            Official Islamic Media Platform
 
                         </div>
 
                     </div>
 
-                    <p
-                        id="channel-description"
-                        class="channel-description">
-
-                        Official Islamic Media Platform
-                        featuring Majlis, Live Streaming,
-                        Shorts and Playlists.
-
-                    </p>
-
                 </div>
 
-                <!-- Right -->
+                <!-- RIGHT -->
 
                 <div class="channel-right">
 
                     <button
                         id="subscribeButton"
-                        class="primary-button">
+                        class="subscribe-button">
 
                         Subscribe
-
-                    </button>
-
-                    <button
-                        id="joinButton"
-                        class="secondary-button">
-
-                        Join
 
                     </button>
 
@@ -309,17 +913,209 @@
 
         </section>
 
-        <!-- =====================================================
+        <!-- ======================================================
+             CHANNEL STATS
+        ======================================================= -->
+
+        <section
+            class="channel-stats">
+
+            <div class="stats-grid">
+
+                <div class="stat-card glass">
+
+                    <span>
+
+                        Subscribers
+
+                    </span>
+
+                    <strong
+                        id="subscriber-count">
+
+                        --
+
+                    </strong>
+
+                </div>
+
+                <div class="stat-card glass">
+
+                    <span>
+
+                        Videos
+
+                    </span>
+
+                    <strong
+                        id="video-count">
+
+                        --
+
+                    </strong>
+
+                </div>
+
+                <div class="stat-card glass">
+
+                    <span>
+
+                        Joined
+
+                    </span>
+
+                    <strong
+                        id="joined-date">
+
+                        --
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ======================================================
+             OFFICIAL VERIFIED ACCOUNTS
+        ======================================================= -->
+
+        <section
+            id="officialAccounts"
+            class="official-accounts">
+
+            <div class="section-header">
+
+                <h2>
+
+                    ✔ Official Accounts
+
+                </h2>
+
+                <p>
+
+                    All social links verified by
+                    <strong>18 BANI HASHIM</strong>
+
+                </p>
+
+            </div>
+
+            <div
+                id="socialCards"
+                class="social-grid">
+
+                <!-- Instagram -->
+
+                <a
+                    href="instagram.html"
+                    class="social-card">
+
+                    <div class="social-icon instagram-icon"></div>
+
+                    <div class="social-info">
+
+                        <h3>
+
+                            Instagram
+
+                        </h3>
+
+                        <span>
+
+                            Official Account
+
+                        </span>
+
+                    </div>
+
+                    <span class="verified-mini">
+
+                        ✔
+
+                    </span>
+
+                </a>
+
+                <!-- Facebook -->
+
+                <a
+                    href="facebook.html"
+                    class="social-card">
+
+                    <div class="social-icon facebook-icon"></div>
+
+                    <div class="social-info">
+
+                        <h3>
+
+                            Facebook
+
+                        </h3>
+
+                        <span>
+
+                            Official Page
+
+                        </span>
+
+                    </div>
+
+                    <span class="verified-mini">
+
+                        ✔
+
+                    </span>
+
+                </a>
+
+                <!-- X -->
+
+                <a
+                    href="x.html"
+                    class="social-card">
+
+                    <div class="social-icon x-icon"></div>
+
+                    <div class="social-info">
+
+                        <h3>
+
+                            X
+
+                        </h3>
+
+                        <span>
+
+                            Official Profile
+
+                        </span>
+
+                    </div>
+
+                    <span class="verified-mini">
+
+                        ✔
+
+                    </span>
+
+                </a>
+
+            </div>
+
+        </section>
+
+        <!-- ======================================================
              MAIN NAVIGATION
-        ===================================================== -->
+        ======================================================= -->
 
         <nav
-            id="main-navigation"
-            class="main-navigation">
+            class="main-tabs">
 
             <a
                 href="index.html"
-                class="navigation-item active">
+                class="tab active">
 
                 Home
 
@@ -327,7 +1123,7 @@
 
             <a
                 href="videos.html"
-                class="navigation-item">
+                class="tab">
 
                 Videos
 
@@ -335,7 +1131,7 @@
 
             <a
                 href="shorts.html"
-                class="navigation-item">
+                class="tab">
 
                 Shorts
 
@@ -343,15 +1139,23 @@
 
             <a
                 href="playlist.html"
-                class="navigation-item">
+                class="tab">
 
                 Playlists
 
             </a>
 
             <a
+                href="live.html"
+                class="tab">
+
+                Live
+
+            </a>
+
+            <a
                 href="about.html"
-                class="navigation-item">
+                class="tab">
 
                 About
 
@@ -359,67 +1163,86 @@
 
         </nav>
 
-                <!-- =====================================================
-             PREMIUM LIVE HERO
-        ====================================================== -->
+                    <!-- ======================================================
+             LIVE / FEATURED HERO
+        ======================================================= -->
 
         <section
             id="hero-live-section"
-            class="hero-live-section"
-            hidden>
+            class="hero-live-section">
 
-            <div class="hero-live-card">
+            <div class="hero-live-card glass">
 
-                <!-- Left -->
+                <!-- Player -->
 
-                <div class="hero-live-player-wrapper">
-
-                    <div class="hero-live-badge">
-
-                        <span class="live-pulse"></span>
-
-                        LIVE NOW
-
-                    </div>
+                <div class="hero-player-area">
 
                     <div
                         id="hero-player"
                         class="hero-player">
 
-                        <!-- JS iframe inject karega -->
+                    </div>
+
+                    <!-- LIVE Badge -->
+
+                    <div
+                        id="heroLiveBadge"
+                        class="hero-live-badge"
+                        hidden>
+
+                        <span class="live-dot"></span>
+
+                        LIVE NOW
 
                     </div>
 
                 </div>
 
-                <!-- Right -->
+                <!-- Details -->
 
-                <div class="hero-live-info">
+                <div class="hero-details">
 
-                    <span class="hero-category">
+                    <div class="hero-top">
 
-                        🔴 LIVE STREAM
+                        <span
+                            id="heroCategory"
+                            class="hero-category">
 
-                    </span>
+                            Featured
+
+                        </span>
+
+                        <span
+                            id="heroDuration">
+
+                        </span>
+
+                    </div>
 
                     <h2
                         id="hero-live-title">
 
+                        Loading...
+
                     </h2>
 
                     <p
-                        id="hero-live-description">
+                        id="heroDescription">
+
+                        Please wait...
 
                     </p>
 
-                    <div class="hero-live-stats">
+                    <!-- Meta -->
 
-                        <div class="hero-stat">
+                    <div class="hero-meta">
 
-                            👁
+                        <div>
+
+                            👀
 
                             <span
-                                id="hero-live-viewers">
+                                id="heroViews">
 
                                 --
 
@@ -427,14 +1250,27 @@
 
                         </div>
 
-                        <div class="hero-stat">
+                        <div>
 
-                            🕒
+                            👍
 
                             <span
-                                id="hero-live-time">
+                                id="heroLikes">
 
-                                Live
+                                --
+
+                            </span>
+
+                        </div>
+
+                        <div>
+
+                            📅
+
+                            <span
+                                id="heroPublishDate">
+
+                                --
 
                             </span>
 
@@ -442,29 +1278,31 @@
 
                     </div>
 
-                    <div class="hero-live-buttons">
+                    <!-- Buttons -->
+
+                    <div class="hero-buttons">
 
                         <button
-                            id="watchWebsiteButton"
+                            id="watchNowButton"
                             class="primary-button">
 
-                            ▶ Watch Live
+                            ▶ Watch Now
 
                         </button>
 
                         <button
-                            id="youtubeLiveButton"
-                            class="secondary-button">
-
-                            YouTube
-
-                        </button>
-
-                        <button
-                            id="shareLiveButton"
+                            id="shareVideoButton"
                             class="secondary-button">
 
                             Share
+
+                        </button>
+
+                        <button
+                            id="saveVideoButton"
+                            class="secondary-button">
+
+                            Save
 
                         </button>
 
@@ -476,13 +1314,122 @@
 
         </section>
 
-        <!-- =====================================================
-             LATEST VIDEOS
-        ====================================================== -->
+        <!-- ======================================================
+             LIVE NOTICE BAR
+        ======================================================= -->
 
         <section
-            id="latest-videos-section"
-            class="content-section">
+            id="liveNotice"
+            class="live-notice"
+            hidden>
+
+            <div class="live-notice-card">
+
+                <div class="live-status">
+
+                    <span class="live-dot"></span>
+
+                    LIVE STREAM RUNNING
+
+                </div>
+
+                <div class="live-text">
+
+                    <h3
+                        id="liveNoticeTitle">
+
+                    </h3>
+
+                </div>
+
+                <button
+                    id="watchLiveButton"
+                    class="primary-button">
+
+                    Watch Live
+
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- ======================================================
+             FEATURED CATEGORIES
+        ======================================================= -->
+
+        <section
+            class="quick-access">
+
+            <div class="quick-grid">
+
+                <a
+                    href="live.html"
+                    class="quick-card">
+
+                    🔴
+
+                    <span>
+
+                        Live
+
+                    </span>
+
+                </a>
+
+                <a
+                    href="videos.html"
+                    class="quick-card">
+
+                    🎥
+
+                    <span>
+
+                        Videos
+
+                    </span>
+
+                </a>
+
+                <a
+                    href="shorts.html"
+                    class="quick-card">
+
+                    📱
+
+                    <span>
+
+                        Shorts
+
+                    </span>
+
+                </a>
+
+                <a
+                    href="playlist.html"
+                    class="quick-card">
+
+                    📚
+
+                    <span>
+
+                        Playlists
+
+                    </span>
+
+                </a>
+
+            </div>
+
+        </section>
+
+        <!-- ======================================================
+             LATEST VIDEOS
+        ======================================================= -->
+
+        <section
+            id="latestVideosSection"
+            class="latest-videos">
 
             <div class="section-header">
 
@@ -493,8 +1440,7 @@
                 </h2>
 
                 <a
-                    href="videos.html"
-                    class="view-all-button">
+                    href="videos.html">
 
                     View All →
 
@@ -506,199 +1452,10 @@
                 id="videos-container"
                 class="video-grid">
 
-                <!-- JS Render -->
+                <!-- Dynamic API -->
 
             </div>
 
         </section>
 
-                <!-- =====================================================
-             TRENDING SHORTS
-        ====================================================== -->
-
-        <section
-            id="shorts-section"
-            class="content-section">
-
-            <div class="section-header">
-
-                <h2>
-
-                    Trending Shorts
-
-                </h2>
-
-                <a
-                    href="shorts.html"
-                    class="view-all-button">
-
-                    View All →
-
-                </a>
-
-            </div>
-
-            <div
-                id="shorts-container"
-                class="shorts-row">
-
-                <!-- Dynamic Shorts -->
-
-            </div>
-
-        </section>
-
-        <!-- =====================================================
-             PLAYLISTS
-        ====================================================== -->
-
-        <section
-            id="playlist-section"
-            class="content-section">
-
-            <div class="section-header">
-
-                <h2>
-
-                    Featured Playlists
-
-                </h2>
-
-                <a
-                    href="playlist.html"
-                    class="view-all-button">
-
-                    View All →
-
-                </a>
-
-            </div>
-
-            <div
-                id="playlist-container"
-                class="playlist-grid">
-
-                <!-- Dynamic Playlist -->
-
-            </div>
-
-        </section>
-
-        <!-- =====================================================
-             COMMUNITY (Future Ready)
-        ====================================================== -->
-
-        <section
-            id="community-section"
-            class="content-section">
-
-            <div class="section-header">
-
-                <h2>
-
-                    Community Updates
-
-                </h2>
-
-            </div>
-
-            <div
-                id="community-feed">
-
-            </div>
-
-        </section>
-
-    </main>
-
-    <!-- =====================================================
-         PREMIUM FOOTER
-    ====================================================== -->
-
-    <footer
-        id="site-footer">
-
-        <div class="footer-logo">
-
-            <img
-                src="assets/logos/logo.svg"
-                alt="18 BANI HASHIM">
-
-        </div>
-
-        <h3>
-
-            18 BANI HASHIM
-
-        </h3>
-
-        <p>
-
-            Official Islamic Media Platform
-
-        </p>
-
-        <div class="footer-links">
-
-            <a href="index.html">
-
-                Home
-
-            </a>
-
-            <a href="videos.html">
-
-                Videos
-
-            </a>
-
-            <a href="shorts.html">
-
-                Shorts
-
-            </a>
-
-            <a href="playlist.html">
-
-                Playlists
-
-            </a>
-
-            <a href="about.html">
-
-                About
-
-            </a>
-
-        </div>
-
-        <div class="footer-watermark">
-
-            © 2026 18 BANI HASHIM • Designed & Developed by Ghazi Abbas
-
-        </div>
-
-    </footer>
-
-</div>
-
-<!-- =====================================================
-     JAVASCRIPT
-====================================================== -->
-
-<script src="js/config.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/api.js"></script>
-
-<script src="js/live.js"></script>
-<script src="js/search.js"></script>
-<script src="js/themes.js"></script>
-
-<script src="js/videos.js"></script>
-<script src="js/playlist.js"></script>
-
-<script src="js/app.js"></script>
-
-</body>
-
-</html>
+            
