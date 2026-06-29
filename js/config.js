@@ -14,7 +14,7 @@ const CONFIG = {
 
     YOUTUBE: {
 
-        API_KEY: 'AIzaSyCoM4meZeWK-p6h35dNsU9UXYYGhMJryRI',
+        API_KEY: 'AIzaSyDZPbXMWqSM-4kCi77H0zXcj9ZIhUca4gM',
 
         CHANNEL_ID: 'UC2Pl7NZVhYAI3FMgl61KJSQ',
 
