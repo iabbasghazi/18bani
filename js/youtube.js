@@ -1,157 +1,144 @@
 /* ==========================================================
    18 BANI HASHIM
-   YOUTUBE ENGINE
-   Version : 2.0.0
-   Part 1
+   YouTube Engine
+   Version : 3.0.0
 ========================================================== */
 
 'use strict';
 
-/* ==========================================================
-   YOUTUBE ENGINE CLASS
-========================================================== */
-
-class YouTubeEngine {
+class YouTubeAPI {
 
     constructor() {
 
         this.config = CONFIG.YOUTUBE;
 
+        this.apiKey = this.config.API_KEY;
+
+        this.channelId = this.config.CHANNEL_ID;
+
+        this.baseURL = this.config.BASE_URL;
+
         this.cache = new Map();
 
         this.channel = null;
 
-        this.latestVideos = [];
+        this.live = null;
 
-        this.liveVideo = null;
+        this.videos = [];
 
         this.playlists = [];
 
         this.shorts = [];
 
-        this.abortController = null;
-
         this.initialized = false;
+
+        this.loading = false;
 
     }
 
-    /* ======================================================
+    /* =====================================================
        INITIALIZE
-    ====================================================== */
+    ===================================================== */
 
     async init() {
 
-        try {
+        if (this.initialized) {
 
-            this.validateConfig();
-
-            this.abortController = new AbortController();
-
-            this.initialized = true;
-
-            console.log("✅ YouTube Engine Initialized");
-
-        } catch (error) {
-
-            console.error(error);
-
-            throw error;
+            return;
 
         }
 
+        this.validate();
+
+        this.loading = true;
+
+        await this.bootstrap();
+
+        this.initialized = true;
+
+        this.loading = false;
+
+        console.log("YouTube Engine Ready");
+
     }
 
-    /* ======================================================
-       VALIDATE CONFIG
-    ====================================================== */
+    /* =====================================================
+       VALIDATE
+    ===================================================== */
 
-    validateConfig() {
+    validate() {
 
-        if (!this.config.API_KEY) {
+        if (!this.apiKey) {
 
             throw new Error("YouTube API Key Missing");
 
         }
 
-        if (!this.config.CHANNEL_ID) {
+        if (!this.channelId) {
 
-            throw new Error("YouTube Channel ID Missing");
+            throw new Error("Channel ID Missing");
 
         }
 
     }
 
-    /* ======================================================
-       BASE URL
-    ====================================================== */
+    /* =====================================================
+       BOOTSTRAP
+    ===================================================== */
 
-    endpoint(path) {
+    async bootstrap() {
 
-        return `${this.config.BASE_URL}/${path}`;
+        await Promise.all([
 
-    }
+            this.loadChannel(),
 
-    /* ======================================================
-       DEFAULT PARAMETERS
-    ====================================================== */
+            this.loadLive(),
 
-    params(extra = {}) {
+            this.loadVideos(),
 
-        return {
+            this.loadPlaylists()
 
-            key: this.config.API_KEY,
-
-            ...extra
-
-        };
+        ]);
 
     }
 
-    /* ======================================================
-       BUILD QUERY
-    ====================================================== */
+    /* =====================================================
+       REQUEST
+    ===================================================== */
 
-    query(parameters) {
+    async request(endpoint, params = {}) {
 
-        return new URLSearchParams(parameters).toString();
+        params.key = this.apiKey;
 
-    }
+        const url = new URL(
 
-    /* ======================================================
-       COMPLETE URL
-    ====================================================== */
+            this.baseURL + endpoint
 
-    build(path, parameters = {}) {
+        );
 
-        return `${this.endpoint(path)}?${this.query(this.params(parameters))}`;
+        Object.keys(params).forEach(key => {
 
-    }
+            url.searchParams.append(
 
-    /* ======================================================
-       FETCH JSON
-    ====================================================== */
+                key,
 
-    async request(path, parameters = {}) {
+                params[key]
 
-        const url = this.build(path, parameters);
-
-        const response = await fetch(url, {
-
-            signal: this.abortController.signal,
-
-            headers: {
-
-                "Accept": "application/json"
-
-            }
+            );
 
         });
+
+        const response = await fetch(
+
+            url.toString()
+
+        );
 
         if (!response.ok) {
 
             throw new Error(
 
-                `YouTube API Error (${response.status})`
+                "YouTube API Error"
 
             );
 
@@ -161,27 +148,27 @@ class YouTubeEngine {
 
     }
 
-    /* ======================================================
-       CACHE GET
-    ====================================================== */
+    /* =====================================================
+       CACHE
+    ===================================================== */
 
     getCache(key) {
 
-        const item = this.cache.get(key);
+        const data = this.cache.get(key);
 
-        if (!item) {
+        if (!data) {
 
             return null;
 
         }
 
-        const expired =
+        if (
 
             Date.now() >
 
-            item.time + this.config.CACHE_TIME;
+            data.expire
 
-        if (expired) {
+        ) {
 
             this.cache.delete(key);
 
@@ -189,29 +176,39 @@ class YouTubeEngine {
 
         }
 
-        return item.value;
+        return data.value;
 
     }
 
-    /* ======================================================
-       CACHE SET
-    ====================================================== */
+    setCache(
 
-    setCache(key, value) {
+        key,
+
+        value,
+
+        time = CONFIG.CACHE.CHANNEL
+
+    ) {
 
         this.cache.set(key, {
 
             value,
 
-            time: Date.now()
+            expire: Date.now() + time
 
         });
 
     }
 
-    /* ======================================================
-       FORMAT NUMBER
-    ====================================================== */
+    clearCache() {
+
+        this.cache.clear();
+
+    }
+
+    /* =====================================================
+       HELPERS
+    ===================================================== */
 
     formatNumber(number) {
 
@@ -221,11 +218,9 @@ class YouTubeEngine {
 
             return (
 
-                (number / 1000000000).toFixed(1)
+                number / 1000000000
 
-                + "B"
-
-            );
+            ).toFixed(1) + "B";
 
         }
 
@@ -233,11 +228,9 @@ class YouTubeEngine {
 
             return (
 
-                (number / 1000000).toFixed(1)
+                number / 1000000
 
-                + "M"
-
-            );
+            ).toFixed(1) + "M";
 
         }
 
@@ -245,25 +238,21 @@ class YouTubeEngine {
 
             return (
 
-                (number / 1000).toFixed(1)
+                number / 1000
 
-                + "K"
-
-            );
+            ).toFixed(1) + "K";
 
         }
 
-        return number.toLocaleString();
+        return number.toString();
 
     }
 
-    /* ======================================================
-       FORMAT DATE
-    ====================================================== */
-
     formatDate(date) {
 
-        return new Date(date).toLocaleDateString(
+        return new Date(date)
+
+        .toLocaleDateString(
 
             "en-IN",
 
@@ -281,101 +270,19 @@ class YouTubeEngine {
 
     }
 
-    /* ======================================================
-       FORMAT TIME
-    ====================================================== */
-
-    formatTime(date) {
-
-        return new Date(date).toLocaleTimeString(
-
-            "en-IN",
-
-            {
-
-                hour: "2-digit",
-
-                minute: "2-digit"
-
-            }
-
-        );
-
-    }
-
-    /* ======================================================
-       FORMAT DURATION
-    ====================================================== */
-
-    formatDuration(duration) {
-
-        if (!duration) return "";
-
-        let h = 0;
-
-        let m = 0;
-
-        let s = 0;
-
-        const matchH = duration.match(/(\d+)H/);
-
-        const matchM = duration.match(/(\d+)M/);
-
-        const matchS = duration.match(/(\d+)S/);
-
-        if (matchH) h = parseInt(matchH[1]);
-
-        if (matchM) m = parseInt(matchM[1]);
-
-        if (matchS) s = parseInt(matchS[1]);
-
-        const parts = [];
-
-        if (h > 0) {
-
-            parts.push(h);
-
-        }
-
-        parts.push(
-
-            String(m).padStart(2, "0")
-
-        );
-
-        parts.push(
-
-            String(s).padStart(2, "0")
-
-        );
-
-        return parts.join(":");
-
-    }
-
-    /* ======================================================
-       THUMBNAIL
-    ====================================================== */
-
-    thumbnail(item) {
-
-        if (!item) {
-
-            return "";
-
-        }
+    bestThumbnail(thumbnails) {
 
         return (
 
-            item.maxres?.url ||
+            thumbnails.maxres?.url ||
 
-            item.standard?.url ||
+            thumbnails.standard?.url ||
 
-            item.high?.url ||
+            thumbnails.high?.url ||
 
-            item.medium?.url ||
+            thumbnails.medium?.url ||
 
-            item.default?.url ||
+            thumbnails.default?.url ||
 
             ""
 
@@ -383,740 +290,577 @@ class YouTubeEngine {
 
     }
 
-    /* ======================================================
-       SHORTS FILTER
-    ====================================================== */
+    setText(selector, text) {
 
-    isShort(video) {
+        const element = document.querySelector(selector);
 
-        if (!video) {
+        if (element) {
 
-            return false;
+            element.textContent = text;
 
         }
 
-        const duration = video.contentDetails?.duration;
+    }
 
-        if (!duration) {
+    setImage(selector, src) {
 
-            return false;
+        const element = document.querySelector(selector);
+
+        if (element) {
+
+            element.src = src;
 
         }
 
-        const match = duration.match(/PT(?:(\d+)M)?(?:(\d+)S)?/);
+    }
 
-        if (!match) {
+    setBackground(selector, image) {
 
-            return false;
+        const element = document.querySelector(selector);
+
+        if (element) {
+
+            element.style.backgroundImage =
+
+                `url("${image}")`;
 
         }
 
-        const minutes = Number(match[1] || 0);
-
-        return minutes < 1;
-
     }
 
-}
 
-/* ==========================================================
-   GLOBAL INSTANCE
-========================================================== */
+    /* =====================================================
+       LOAD CHANNEL
+    ===================================================== */
 
-const YouTube = new YouTubeEngine();
+    async loadChannel() {
 
-/* ==========================================================
-   CHANNEL INFORMATION
-========================================================== */
+        const cache = this.getCache("channel");
 
-YouTubeEngine.prototype.getChannel = async function () {
+        if (cache) {
 
-    const cache = this.getCache("channel");
+            this.channel = cache;
 
-    if (cache) {
-
-        this.channel = cache;
-
-        return cache;
-
-    }
-
-    const response = await this.request("channels", {
-
-        part: "snippet,statistics,brandingSettings",
-
-        id: this.config.CHANNEL_ID
-
-    });
-
-    if (!response.items || !response.items.length) {
-
-        throw new Error("Channel not found.");
-
-    }
-
-    const item = response.items[0];
-
-    const data = {
-
-        id: item.id,
-
-        title: item.snippet.title,
-
-        description: item.snippet.description,
-
-        customUrl: item.snippet.customUrl || "",
-
-        publishedAt: item.snippet.publishedAt,
-
-        country: item.snippet.country || "",
-
-        avatar: this.thumbnail(item.snippet.thumbnails),
-
-        banner:
-
-            item.brandingSettings?.image?.bannerExternalUrl ||
-
-            "",
-
-        subscribers:
-
-            this.formatNumber(
-
-                item.statistics.subscriberCount
-
-            ),
-
-        subscribersRaw:
-
-            Number(item.statistics.subscriberCount),
-
-        videos:
-
-            this.formatNumber(
-
-                item.statistics.videoCount
-
-            ),
-
-        videosRaw:
-
-            Number(item.statistics.videoCount),
-
-        views:
-
-            this.formatNumber(
-
-                item.statistics.viewCount
-
-            ),
-
-        viewsRaw:
-
-            Number(item.statistics.viewCount)
-
-    };
-
-    this.channel = data;
-
-    this.setCache("channel", data);
-
-    return data;
-
-};
-
-
-/* ==========================================================
-   UPDATE CHANNEL UI
-========================================================== */
-
-YouTubeEngine.prototype.renderChannel = function () {
-
-    if (!this.channel) return;
-
-    const c = this.channel;
-
-    this.setText(
-
-        "#channelName",
-
-        c.title
-
-    );
-
-    this.setText(
-
-        "#channelHandle",
-
-        "@" + c.customUrl.replace("@", "")
-
-    );
-
-    this.setText(
-
-        "#subscriberCount",
-
-        c.subscribers + " Subscribers"
-
-    );
-
-    this.setText(
-
-        "#videoCount",
-
-        c.videos + " Videos"
-
-    );
-
-    this.setText(
-
-        "#viewCount",
-
-        c.views + " Views"
-
-    );
-
-    this.setText(
-
-        "#channelBio",
-
-        c.description
-
-    );
-
-    this.setImage(
-
-        "#channelLogo",
-
-        c.avatar
-
-    );
-
-    this.setBackground(
-
-        "#channelBanner",
-
-        c.banner
-
-    );
-
-};
-
-
-/* ==========================================================
-   SMALL HELPERS
-========================================================== */
-
-YouTubeEngine.prototype.setText = function (
-
-    selector,
-
-    value
-
-) {
-
-    const el = document.querySelector(selector);
-
-    if (el) {
-
-        el.textContent = value;
-
-    }
-
-};
-
-YouTubeEngine.prototype.setImage = function (
-
-    selector,
-
-    src
-
-) {
-
-    const el = document.querySelector(selector);
-
-    if (el && src) {
-
-        el.src = src;
-
-    }
-
-};
-
-YouTubeEngine.prototype.setBackground = function (
-
-    selector,
-
-    src
-
-) {
-
-    const el = document.querySelector(selector);
-
-    if (el && src) {
-
-        el.style.backgroundImage =
-
-            `url("${src}")`;
-
-    }
-
-};
-
-
-/* ==========================================================
-   LOAD CHANNEL
-========================================================== */
-
-YouTubeEngine.prototype.loadChannel = async function () {
-
-    try {
-
-        await this.getChannel();
-
-        this.renderChannel();
-
-        console.log(
-
-            "✅ Channel Loaded"
-
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(
-
-            "Channel Error:",
-
-            error
-
-        );
-
-    }
-
-};
-
-
-/* ==========================================================
-   CHANNEL READY
-========================================================== */
-
-YouTubeEngine.prototype.channelReady = function () {
-
-    return !!this.channel;
-
-};
-
-/* ==========================================================
-   LIVE STREAM ENGINE
-   Part 3
-========================================================== */
-
-/* ==========================================================
-   GET LIVE STREAM
-========================================================== */
-
-YouTubeEngine.prototype.getLiveStream = async function () {
-
-    const cache = this.getCache("live");
-
-    if (cache) {
-
-        this.liveVideo = cache;
-
-        return cache;
-
-    }
-
-    const response = await this.request("search", {
-
-        part: "snippet",
-
-        channelId: this.config.CHANNEL_ID,
-
-        eventType: "live",
-
-        type: "video",
-
-        maxResults: 1
-
-    });
-
-    if (!response.items || !response.items.length) {
-
-        this.liveVideo = null;
-
-        return null;
-
-    }
-
-    const videoId = response.items[0].id.videoId;
-
-    return await this.getLiveDetails(videoId);
-
-};
-
-
-/* ==========================================================
-   GET LIVE DETAILS
-========================================================== */
-
-YouTubeEngine.prototype.getLiveDetails = async function (videoId) {
-
-    const response = await this.request("videos", {
-
-        part: "snippet,liveStreamingDetails,statistics",
-
-        id: videoId
-
-    });
-
-    if (!response.items || !response.items.length) {
-
-        return null;
-
-    }
-
-    const item = response.items[0];
-
-    const data = {
-
-        id: item.id,
-
-        title: item.snippet.title,
-
-        description: item.snippet.description,
-
-        publishedAt: item.snippet.publishedAt,
-
-        thumbnail: this.thumbnail(item.snippet.thumbnails),
-
-        viewers: this.formatNumber(
-
-            item.liveStreamingDetails?.concurrentViewers || 0
-
-        ),
-
-        viewersRaw: Number(
-
-            item.liveStreamingDetails?.concurrentViewers || 0
-
-        ),
-
-        likes: this.formatNumber(
-
-            item.statistics.likeCount || 0
-
-        ),
-
-        views: this.formatNumber(
-
-            item.statistics.viewCount || 0
-
-        ),
-
-        url:
-
-            "https://www.youtube.com/watch?v=" +
-
-            item.id,
-
-        embed:
-
-            "https://www.youtube.com/embed/" +
-
-            item.id +
-
-            "?autoplay=1"
-
-    };
-
-    this.liveVideo = data;
-
-    this.setCache("live", data);
-
-    return data;
-
-};
-
-
-/* ==========================================================
-   RENDER LIVE STREAM
-========================================================== */
-
-YouTubeEngine.prototype.renderLive = function () {
-
-    const wrapper = document.querySelector("#liveSection");
-
-    if (!wrapper) {
-
-        return;
-
-    }
-
-    if (!this.liveVideo) {
-
-        wrapper.style.display = "none";
-
-        return;
-
-    }
-
-    wrapper.style.display = "";
-
-    const live = this.liveVideo;
-
-    this.setText(
-
-        "#liveTitle",
-
-        live.title
-
-    );
-
-    this.setText(
-
-        "#liveViewers",
-
-        live.viewers +
-
-        " Watching"
-
-    );
-
-    this.setText(
-
-        "#liveViews",
-
-        live.views +
-
-        " Views"
-
-    );
-
-    this.setText(
-
-        "#liveDate",
-
-        this.formatDate(
-
-            live.publishedAt
-
-        )
-
-    );
-
-    this.setImage(
-
-        "#liveThumbnail",
-
-        live.thumbnail
-
-    );
-
-    const watch =
-
-        document.querySelector(
-
-            "#watchLive"
-
-        );
-
-    if (watch) {
-
-        watch.href = live.url;
-
-    }
-
-};
-
-
-/* ==========================================================
-   LOAD LIVE STREAM
-========================================================== */
-
-YouTubeEngine.prototype.loadLive = async function () {
-
-    try {
-
-        await this.getLiveStream();
-
-        this.renderLive();
-
-        console.log(
-
-            "🔴 Live Loaded"
-
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(
-
-            "Live Error:",
-
-            error
-
-        );
-
-    }
-
-};
-
-
-/* ==========================================================
-   AUTO REFRESH
-========================================================== */
-
-YouTubeEngine.prototype.startLiveRefresh = function () {
-
-    if (
-
-        !CONFIG.LIVE.AUTO_REFRESH
-
-    ) {
-
-        return;
-
-    }
-
-    setInterval(async () => {
-
-        this.cache.delete("live");
-
-        await this.loadLive();
-
-    },
-
-    CONFIG.LIVE.REFRESH_INTERVAL);
-
-};
-
-
-/* ==========================================================
-   LIVE STATUS
-========================================================== */
-
-YouTubeEngine.prototype.isLive = function () {
-
-    return this.liveVideo !== null;
-
-};
-
-
-/* ==========================================================
-   LIVE PLACEHOLDER
-========================================================== */
-
-YouTubeEngine.prototype.clearLive = function () {
-
-    const wrapper = document.querySelector(
-
-        "#liveSection"
-
-    );
-
-    if (wrapper) {
-
-        wrapper.style.display = "none";
-
-    }
-
-};
-
-
-/* ==========================================================
-   END PART 3
-========================================================== */
-
-/* ==========================================================
-   LATEST VIDEOS ENGINE
-   Part 4
-========================================================== */
-
-/* ==========================================================
-   GET UPLOAD PLAYLIST
-========================================================== */
-
-YouTubeEngine.prototype.getUploadPlaylist = async function () {
-
-    if (!this.channel) {
-
-        await this.getChannel();
-
-    }
-
-    const response = await this.request("channels", {
-
-        part: "contentDetails",
-
-        id: this.config.CHANNEL_ID
-
-    });
-
-    return response.items[0]
-        .contentDetails
-        .relatedPlaylists
-        .uploads;
-
-};
-
-
-/* ==========================================================
-   GET LATEST VIDEOS
-========================================================== */
-
-YouTubeEngine.prototype.getLatestVideos = async function () {
-
-    const cache = this.getCache("videos");
-
-    if (cache) {
-
-        this.latestVideos = cache;
-
-        return cache;
-
-    }
-
-    const uploads = await this.getUploadPlaylist();
-
-    const playlist = await this.request("playlistItems", {
-
-        part: "snippet,contentDetails",
-
-        playlistId: uploads,
-
-        maxResults: 50
-
-    });
-
-    const ids = playlist.items.map(item => item.contentDetails.videoId);
-
-    const details = await this.request("videos", {
-
-        part: "snippet,contentDetails,statistics",
-
-        id: ids.join(",")
-
-    });
-
-    const videos = [];
-
-    details.items.forEach(video => {
-
-        if (this.isShort(video)) {
+            this.renderChannel();
 
             return;
 
         }
 
+        const response = await this.request(
+
+            "/channels",
+
+            {
+
+                part: "snippet,statistics,brandingSettings",
+
+                id: this.channelId
+
+            }
+
+        );
+
         if (
 
-            video.snippet.liveBroadcastContent === "live"
+            !response.items ||
+
+            !response.items.length
+
+        ) {
+
+            throw new Error(
+
+                "Channel Not Found"
+
+            );
+
+        }
+
+        this.channel = response.items[0];
+
+        this.setCache(
+
+            "channel",
+
+            this.channel,
+
+            CONFIG.CACHE.CHANNEL
+
+        );
+
+        this.renderChannel();
+
+    }
+
+    /* =====================================================
+       RENDER CHANNEL
+    ===================================================== */
+
+    renderChannel() {
+
+        if (!this.channel) return;
+
+        const snippet =
+
+            this.channel.snippet;
+
+        const stats =
+
+            this.channel.statistics;
+
+        const branding =
+
+            this.channel.brandingSettings;
+
+        this.setText(
+
+            "#channelName",
+
+            snippet.title
+
+        );
+
+        this.setText(
+
+            "#channelHandle",
+
+            snippet.customUrl ||
+
+            "@18BaniHashim"
+
+        );
+
+        this.setText(
+
+            "#subscriberCount",
+
+            this.formatNumber(
+
+                stats.subscriberCount
+
+            ) +
+
+            " Subscribers"
+
+        );
+
+        this.setText(
+
+            "#videoCount",
+
+            this.formatNumber(
+
+                stats.videoCount
+
+            ) +
+
+            " Videos"
+
+        );
+
+        this.setText(
+
+            "#viewCount",
+
+            this.formatNumber(
+
+                stats.viewCount
+
+            ) +
+
+            " Views"
+
+        );
+
+        this.setText(
+
+            "#channelBio",
+
+            snippet.description
+
+        );
+
+        this.setImage(
+
+            "#channelLogo",
+
+            this.bestThumbnail(
+
+                snippet.thumbnails
+
+            )
+
+        );
+
+        if (
+
+            branding?.image
+
+                ?.bannerExternalUrl
+
+        ) {
+
+            this.setBackground(
+
+                "#channelBanner",
+
+                branding.image
+
+                .bannerExternalUrl
+
+            );
+
+        }
+
+        this.renderVerification();
+
+    }
+
+    /* =====================================================
+       VERIFIED BADGE
+    ===================================================== */
+
+    renderVerification() {
+
+        const badge =
+
+            document.querySelector(
+
+                "#verifiedBadge"
+
+            );
+
+        if (!badge) return;
+
+        badge.innerHTML = `
+
+<svg
+width="18"
+height="18"
+viewBox="0 0 24 24"
+fill="#3ea6ff">
+
+<path d="M22 12l-2.1 2.4.3 3.2-3.1.7-1.6 2.8L12 20l-3.5 1.1-1.6-2.8-3.1-.7.3-3.2L2 12l2.1-2.4-.3-3.2 3.1-.7L8.5 3 12 4l3.5-1 1.6 2.7 3.1.7-.3 3.2z"/>
+
+<path
+d="M10.2 15.3l-2.4-2.4 1.1-1.1 1.3 1.3 4-4 1.1 1.1z"
+fill="#fff"/>
+
+</svg>
+
+`;
+
+    }
+
+    /* =====================================================
+       SHOW CHANNEL
+    ===================================================== */
+
+    showChannel() {
+
+        const loading =
+
+            document.querySelector(
+
+                "#channelLoading"
+
+            );
+
+        if (loading) {
+
+            loading.remove();
+
+        }
+
+        const section =
+
+            document.querySelector(
+
+                "#channelSection"
+
+            );
+
+        if (section) {
+
+            section.classList.add(
+
+                "loaded"
+
+            );
+
+        }
+
+    }
+
+    /* =====================================================
+       END PART 2
+    ===================================================== */
+
+    /* =====================================================
+       LOAD LIVE STREAM
+    ===================================================== */
+
+    async loadLive() {
+
+        const cache = this.getCache("live");
+
+        if (cache) {
+
+            this.live = cache;
+
+            this.renderLive();
+
+            return;
+
+        }
+
+        const response = await this.request(
+
+            "/search",
+
+            {
+
+                part: "snippet",
+
+                channelId: this.channelId,
+
+                eventType: "live",
+
+                type: "video",
+
+                maxResults: 1
+
+            }
+
+        );
+
+        if (
+
+            !response.items ||
+
+            !response.items.length
+
+        ) {
+
+            this.hideLive();
+
+            return;
+
+        }
+
+        const liveId =
+
+            response.items[0].id.videoId;
+
+        const details = await this.request(
+
+            "/videos",
+
+            {
+
+                part:
+
+                "snippet,statistics,liveStreamingDetails,contentDetails",
+
+                id: liveId
+
+            }
+
+        );
+
+        if (
+
+            !details.items ||
+
+            !details.items.length
+
+        ) {
+
+            this.hideLive();
+
+            return;
+
+        }
+
+        this.live = details.items[0];
+
+        this.setCache(
+
+            "live",
+
+            this.live,
+
+            CONFIG.CACHE.LIVE
+
+        );
+
+        this.renderLive();
+
+    }
+
+    /* =====================================================
+       RENDER LIVE
+    ===================================================== */
+
+    renderLive() {
+
+        if (!this.live) {
+
+            this.hideLive();
+
+            return;
+
+        }
+
+        const live = this.live;
+
+        this.setText(
+
+            "#liveTitle",
+
+            live.snippet.title
+
+        );
+
+        this.setText(
+
+            "#liveViews",
+
+            this.formatNumber(
+
+                live.statistics.viewCount
+
+            ) + " Views"
+
+        );
+
+        this.setText(
+
+            "#liveWatching",
+
+            this.formatNumber(
+
+                live.liveStreamingDetails
+                ?.concurrentViewers || 0
+
+            ) + " Watching"
+
+        );
+
+        this.setText(
+
+            "#liveDate",
+
+            this.formatDate(
+
+                live.snippet.publishedAt
+
+            )
+
+        );
+
+        this.setImage(
+
+            "#liveThumbnail",
+
+            this.bestThumbnail(
+
+                live.snippet.thumbnails
+
+            )
+
+        );
+
+        const button =
+
+            document.querySelector(
+
+                "#watchLive"
+
+            );
+
+        if (button) {
+
+            button.href =
+
+                "https://www.youtube.com/watch?v=" +
+
+                live.id;
+
+        }
+
+        const frame =
+
+            document.querySelector(
+
+                "#livePlayer"
+
+            );
+
+        if (frame) {
+
+            frame.src =
+
+                "https://www.youtube.com/embed/" +
+
+                live.id +
+
+                "?autoplay=0&rel=0";
+
+        }
+
+        const section =
+
+            document.querySelector(
+
+                "#liveSection"
+
+            );
+
+        if (section) {
+
+            section.classList.add(
+
+                "active"
+
+            );
+
+        }
+
+    }
+
+    /* =====================================================
+       HIDE LIVE
+    ===================================================== */
+
+    hideLive() {
+
+        const section =
+
+            document.querySelector(
+
+                "#liveSection"
+
+            );
+
+        if (section) {
+
+            section.style.display = "none";
+
+        }
+
+    }
+
+    /* =====================================================
+       LIVE AUTO REFRESH
+    ===================================================== */
+
+    startLiveRefresh() {
+
+        if (
+
+            !CONFIG.LIVE.AUTO_REFRESH
 
         ) {
 
@@ -1124,114 +868,222 @@ YouTubeEngine.prototype.getLatestVideos = async function () {
 
         }
 
-        videos.push({
+        setInterval(async () => {
 
-            id: video.id,
+            this.cache.delete("live");
 
-            title: video.snippet.title,
+            await this.loadLive();
 
-            description: video.snippet.description,
+        },
 
-            thumbnail: this.thumbnail(
+        CONFIG.LIVE.REFRESH_INTERVAL);
 
-                video.snippet.thumbnails
+    }
 
-            ),
+    /* =====================================================
+       LIVE STATUS
+    ===================================================== */
 
-            duration: this.formatDuration(
+    isLive() {
 
-                video.contentDetails.duration
+        return this.live !== null;
 
-            ),
+    }
 
-            date: this.formatDate(
+    /* =====================================================
+       END PART 3
+    ===================================================== */
 
-                video.snippet.publishedAt
+    /* =====================================================
+       LOAD LATEST VIDEOS
+    ===================================================== */
 
-            ),
+    async loadVideos() {
 
-            views: this.formatNumber(
+        const cache = this.getCache("videos");
 
-                video.statistics.viewCount
+        if (cache) {
 
-            ),
+            this.videos = cache;
 
-            url:
+            this.renderVideos();
 
-                "https://www.youtube.com/watch?v=" +
+            return;
 
-                video.id,
+        }
 
-            live:
+        const search = await this.request(
 
-                video.snippet.title
+            "/search",
 
-                .toLowerCase()
+            {
 
-                .includes("live")
+                part: "snippet",
+
+                channelId: this.channelId,
+
+                order: "date",
+
+                type: "video",
+
+                maxResults: 50
+
+            }
+
+        );
+
+        if (
+
+            !search.items ||
+
+            !search.items.length
+
+        ) {
+
+            this.showVideoError();
+
+            return;
+
+        }
+
+        const ids = search.items
+
+            .map(item => item.id.videoId)
+
+            .join(",");
+
+        const details = await this.request(
+
+            "/videos",
+
+            {
+
+                part:
+
+                "snippet,contentDetails,statistics",
+
+                id: ids
+
+            }
+
+        );
+
+        this.videos = details.items
+
+            .filter(video => {
+
+                if (
+
+                    video.snippet
+
+                    .liveBroadcastContent ===
+
+                    "live"
+
+                ) {
+
+                    return false;
+
+                }
+
+                return !this.isShort(video);
+
+            })
+
+            .slice(0, 30);
+
+        this.setCache(
+
+            "videos",
+
+            this.videos,
+
+            CONFIG.CACHE.VIDEOS
+
+        );
+
+        this.renderVideos();
+
+    }
+
+    /* =====================================================
+       RENDER VIDEOS
+    ===================================================== */
+
+    renderVideos() {
+
+        const container =
+
+            document.querySelector(
+
+                "#latestVideos"
+
+            );
+
+        if (!container) return;
+
+        container.innerHTML = "";
+
+        this.videos.forEach(video => {
+
+            container.insertAdjacentHTML(
+
+                "beforeend",
+
+                this.videoCard(video)
+
+            );
 
         });
 
-    });
+    }
 
-    this.latestVideos = videos.slice(0, 30);
+    /* =====================================================
+       VIDEO CARD
+    ===================================================== */
 
-    this.setCache(
+    videoCard(video) {
 
-        "videos",
-
-        this.latestVideos
-
-    );
-
-    return this.latestVideos;
-
-};
-
-
-/* ==========================================================
-   VIDEO CARD
-========================================================== */
-
-YouTubeEngine.prototype.videoCard = function (video) {
-
-    return `
+        return `
 
 <div class="video-card reveal">
 
 <a
-href="${video.url}"
+href="https://www.youtube.com/watch?v=${video.id}"
 target="_blank"
-class="video-thumbnail">
+class="video-thumb">
 
 <img
-src="${video.thumbnail}"
+
 loading="lazy"
-alt="${video.title}">
 
-${video.live ? `
+src="${this.bestThumbnail(
 
-<div class="live-badge">
+video.snippet.thumbnails
 
-🔴 LIVE
+)}"
 
-</div>
+alt="${video.snippet.title}"
 
-` : ""}
+>
 
-<div class="video-duration">
+<span class="duration">
 
-${video.duration}
+${this.formatDuration(
 
-</div>
+video.contentDetails.duration
+
+)}
+
+</span>
 
 </a>
 
-<div class="video-content">
+<div class="video-info">
 
 <h3 class="video-title">
 
-${video.title}
+${video.snippet.title}
 
 </h3>
 
@@ -1239,24 +1091,41 @@ ${video.title}
 
 <span>
 
-👁 ${video.views}
+👁
+
+${this.formatNumber(
+
+video.statistics.viewCount
+
+)}
 
 </span>
 
 <span>
 
-📅 ${video.date}
+📅
+
+${this.formatDate(
+
+video.snippet.publishedAt
+
+)}
 
 </span>
 
 </div>
 
 <a
-href="${video.url}"
-target="_blank"
-class="watch-button">
 
-▶ Watch Now
+class="watch-button"
+
+target="_blank"
+
+href="https://www.youtube.com/watch?v=${video.id}"
+
+>
+
+Watch Now
 
 </a>
 
@@ -1266,685 +1135,38 @@ class="watch-button">
 
 `;
 
-};
-
-
-/* ==========================================================
-   RENDER VIDEOS
-========================================================== */
-
-YouTubeEngine.prototype.renderVideos = function () {
-
-    const container = document.querySelector(
-
-        "#latestVideos"
-
-    );
-
-    if (!container) {
-
-        return;
-
     }
 
-    container.innerHTML = "";
+    /* =====================================================
+       NO VIDEOS
+    ===================================================== */
 
-    this.latestVideos.forEach(video => {
+    showVideoError() {
 
-        container.insertAdjacentHTML(
-
-            "beforeend",
-
-            this.videoCard(video)
-
-        );
-
-    });
-
-};
-
-
-/* ==========================================================
-   LOAD VIDEOS
-========================================================== */
-
-YouTubeEngine.prototype.loadVideos = async function () {
-
-    try {
-
-        await this.getLatestVideos();
-
-        this.renderVideos();
-
-        console.log(
-
-            "📺 Latest Videos Loaded"
-
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(
-
-            "Videos Error:",
-
-            error
-
-        );
-
-    }
-
-};
-
-
-/* ==========================================================
-   END PART 4
-========================================================== */
-
-/* ==========================================================
-   PLAYLISTS & SHORTS ENGINE
-   Version : 2.0.0
-   Part 5
-========================================================== */
-
-/* ==========================================================
-   GET PLAYLISTS
-========================================================== */
-
-YouTubeEngine.prototype.getPlaylists = async function () {
-
-    const cache = this.getCache("playlists");
-
-    if (cache) {
-
-        this.playlists = cache;
-
-        return cache;
-
-    }
-
-    const response = await this.request("playlists", {
-
-        part: "snippet,contentDetails",
-
-        channelId: this.config.CHANNEL_ID,
-
-        maxResults: 50
-
-    });
-
-    this.playlists = response.items.map(item => ({
-
-        id: item.id,
-
-        title: item.snippet.title,
-
-        description: item.snippet.description,
-
-        thumbnail: this.thumbnail(
-
-            item.snippet.thumbnails
-
-        ),
-
-        count: Number(
-
-            item.contentDetails.itemCount
-
-        ),
-
-        url:
-
-            "https://www.youtube.com/playlist?list=" +
-
-            item.id
-
-    }));
-
-    this.setCache(
-
-        "playlists",
-
-        this.playlists
-
-    );
-
-    return this.playlists;
-
-};
-
-
-/* ==========================================================
-   RENDER PLAYLISTS
-========================================================== */
-
-YouTubeEngine.prototype.renderPlaylists = function () {
-
-    const container = document.querySelector(
-
-        "#playlistGrid"
-
-    );
-
-    if (!container) {
-
-        return;
-
-    }
-
-    container.innerHTML = "";
-
-    this.playlists.forEach(list => {
-
-        container.insertAdjacentHTML(
-
-            "beforeend",
-
-`
-
-<div class="playlist-card reveal">
-
-<a
-href="${list.url}"
-target="_blank"
-class="playlist-thumb">
-
-<img
-src="${list.thumbnail}"
-loading="lazy"
-alt="${list.title}">
-
-<div class="playlist-count">
-
-📚 ${list.count} Videos
-
-</div>
-
-</a>
-
-<div class="playlist-content">
-
-<h3>
-
-${list.title}
-
-</h3>
-
-<p>
-
-${list.description}
-
-</p>
-
-<a
-href="${list.url}"
-target="_blank"
-class="watch-button">
-
-Open Playlist
-
-</a>
-
-</div>
-
-</div>
-
-`
-
-        );
-
-    });
-
-};
-
-
-/* ==========================================================
-   LOAD PLAYLISTS
-========================================================== */
-
-YouTubeEngine.prototype.loadPlaylists = async function () {
-
-    try {
-
-        await this.getPlaylists();
-
-        this.renderPlaylists();
-
-        console.log(
-
-            "📚 Playlists Loaded"
-
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(
-
-            "Playlist Error:",
-
-            error
-
-        );
-
-    }
-
-};
-
-
-/* ==========================================================
-   GET SHORTS
-========================================================== */
-
-YouTubeEngine.prototype.getShorts = function () {
-
-    this.shorts = this.latestVideos.filter(video => {
-
-        return (
-
-            video.duration === "0:59" ||
-
-            video.duration === "00:59" ||
-
-            video.duration === "0:58" ||
-
-            video.duration === "00:58"
-
-        );
-
-    });
-
-    return this.shorts;
-
-};
-
-
-/* ==========================================================
-   RENDER SHORTS
-========================================================== */
-
-YouTubeEngine.prototype.renderShorts = function () {
-
-    const container = document.querySelector(
-
-        "#shortsGrid"
-
-    );
-
-    if (!container) {
-
-        return;
-
-    }
-
-    container.innerHTML = "";
-
-    this.shorts.forEach(video => {
-
-        container.insertAdjacentHTML(
-
-            "beforeend",
-
-            this.videoCard(video)
-
-        );
-
-    });
-
-};
-
-
-/* ==========================================================
-   LOAD SHORTS
-========================================================== */
-
-YouTubeEngine.prototype.loadShorts = async function () {
-
-    if (
-
-        this.latestVideos.length === 0
-
-    ) {
-
-        await this.loadVideos();
-
-    }
-
-    this.getShorts();
-
-    this.renderShorts();
-
-    console.log(
-
-        "📱 Shorts Loaded"
-
-    );
-
-};
-
-
-/* ==========================================================
-   PRELOAD
-========================================================== */
-
-YouTubeEngine.prototype.preloadImages = function () {
-
-    [
-
-        ...this.latestVideos,
-
-        ...this.playlists
-
-    ].forEach(item => {
-
-        if (!item.thumbnail) {
-
-            return;
-
-        }
-
-        const image = new Image();
-
-        image.src = item.thumbnail;
-
-    });
-
-};
-
-
-/* ==========================================================
-   END PART 5
-========================================================== */
-
-/* ==========================================================
-   18 BANI HASHIM
-   YOUTUBE ENGINE
-   Part 6 (FINAL)
-========================================================== */
-
-
-/* ==========================================================
-   GET SHORTS (SEPARATE API)
-========================================================== */
-
-YouTubeEngine.prototype.fetchShorts = async function () {
-
-    const cache = this.getCache("shorts");
-
-    if (cache) {
-
-        this.shorts = cache;
-
-        return cache;
-
-    }
-
-    const response = await this.request("search", {
-
-        part: "snippet",
-
-        channelId: this.config.CHANNEL_ID,
-
-        order: "date",
-
-        type: "video",
-
-        maxResults: 50
-
-    });
-
-    const ids = response.items.map(item => item.id.videoId);
-
-    if (!ids.length) {
-
-        this.shorts = [];
-
-        return [];
-
-    }
-
-    const details = await this.request("videos", {
-
-        part: "snippet,contentDetails,statistics",
-
-        id: ids.join(",")
-
-    });
-
-    this.shorts = details.items
-
-        .filter(video => this.isShort(video))
-
-        .map(video => ({
-
-            id: video.id,
-
-            title: video.snippet.title,
-
-            thumbnail: this.thumbnail(
-
-                video.snippet.thumbnails
-
-            ),
-
-            duration: this.formatDuration(
-
-                video.contentDetails.duration
-
-            ),
-
-            views: this.formatNumber(
-
-                video.statistics.viewCount
-
-            ),
-
-            date: this.formatDate(
-
-                video.snippet.publishedAt
-
-            ),
-
-            url:
-
-                "https://www.youtube.com/watch?v=" +
-
-                video.id
-
-        }));
-
-    this.setCache(
-
-        "shorts",
-
-        this.shorts
-
-    );
-
-    return this.shorts;
-
-};
-
-
-/* ==========================================================
-   LOAD SHORTS PAGE
-========================================================== */
-
-YouTubeEngine.prototype.loadShortsPage = async function () {
-
-    try {
-
-        await this.fetchShorts();
-
-        this.renderShorts();
-
-        console.log(
-
-            "✅ Shorts Page Loaded"
-
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(
-
-            error
-
-        );
-
-    }
-
-};
-
-
-/* ==========================================================
-   CLEAR CACHE
-========================================================== */
-
-YouTubeEngine.prototype.clearCache = function () {
-
-    this.cache.clear();
-
-};
-
-
-/* ==========================================================
-   REFRESH
-========================================================== */
-
-YouTubeEngine.prototype.refresh = async function () {
-
-    this.clearCache();
-
-    await this.loadChannel();
-
-    await this.loadLive();
-
-    await this.loadVideos();
-
-};
-
-
-/* ==========================================================
-   AUTO INITIALIZE
-========================================================== */
-
-YouTubeEngine.prototype.start = async function () {
-
-    try {
-
-        await this.init();
-
-        await this.loadChannel();
-
-        await this.loadLive();
-
-        await this.loadVideos();
-
-        this.startLiveRefresh();
-
-        console.log(
-
-            "🚀 Website Ready"
-
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(
-
-            "Initialization Failed",
-
-            error
-
-        );
-
-    }
-
-};
-
-
-/* ==========================================================
-   DESTROY
-========================================================== */
-
-YouTubeEngine.prototype.destroy = function () {
-
-    if (
-
-        this.abortController
-
-    ) {
-
-        this.abortController.abort();
-
-    }
-
-    this.cache.clear();
-
-};
-
-
-/* ==========================================================
-   PAGE AUTO DETECTION
-========================================================== */
-
-document.addEventListener(
-
-    "DOMContentLoaded",
-
-    async () => {
-
-        await YouTube.start();
-
-        if (
+        const container =
 
             document.querySelector(
 
-                "#playlistGrid"
+                "#latestVideos"
 
-            )
+            );
 
-        ) {
+        if (!container) return;
 
-            await YouTube.loadPlaylists();
+        container.innerHTML =
 
-        }
+`
 
-        if (
+<div class="empty-state">
 
-            document.querySelector(
+No Videos Available
 
-                "#shortsGrid"
+</div>
 
-            )
-
-        ) {
-
-            await YouTube.loadShortsPage();
-
-        }
+`;
 
     }
 
-);
-
-
-/* ==========================================================
-   GLOBAL
-========================================================== */
-
-window.YouTube = YouTube;
-
-
-/* ==========================================================
-   END OF FILE
-========================================================== */
-
+    /* =====================================================
+       END PART 4
+    ===================================================== */
