@@ -1170,3 +1170,550 @@ No Videos Available
     /* =====================================================
        END PART 4
     ===================================================== */
+
+    /* =====================================================
+       LOAD PLAYLISTS
+    ===================================================== */
+
+    async loadPlaylists() {
+
+        const cache = this.getCache("playlists");
+
+        if (cache) {
+
+            this.playlists = cache;
+
+            this.renderPlaylists();
+
+            return;
+
+        }
+
+        const response = await this.request(
+
+            "/playlists",
+
+            {
+
+                part: "snippet,contentDetails",
+
+                channelId: this.channelId,
+
+                maxResults: 50
+
+            }
+
+        );
+
+        this.playlists = response.items || [];
+
+        this.setCache(
+
+            "playlists",
+
+            this.playlists,
+
+            CONFIG.CACHE.PLAYLISTS
+
+        );
+
+        this.renderPlaylists();
+
+    }
+
+    /* =====================================================
+       RENDER PLAYLISTS
+    ===================================================== */
+
+    renderPlaylists() {
+
+        const container = document.querySelector(
+
+            "#playlistGrid"
+
+        );
+
+        if (!container) return;
+
+        container.innerHTML = "";
+
+        this.playlists.forEach(item => {
+
+            container.insertAdjacentHTML(
+
+                "beforeend",
+
+                this.playlistCard(item)
+
+            );
+
+        });
+
+    }
+
+    /* =====================================================
+       PLAYLIST CARD
+    ===================================================== */
+
+    playlistCard(item) {
+
+        return `
+
+<div class="playlist-card reveal">
+
+<a
+href="https://www.youtube.com/playlist?list=${item.id}"
+target="_blank"
+class="playlist-thumb">
+
+<img
+
+loading="lazy"
+
+src="${this.bestThumbnail(
+
+item.snippet.thumbnails
+
+)}"
+
+alt="${item.snippet.title}"
+
+>
+
+<div class="playlist-count">
+
+📚 ${this.formatNumber(
+
+item.contentDetails.itemCount
+
+)} Videos
+
+</div>
+
+</a>
+
+<div class="playlist-info">
+
+<h3>
+
+${item.snippet.title}
+
+</h3>
+
+<p>
+
+${item.snippet.description || ""}
+
+</p>
+
+<a
+
+class="watch-button"
+
+target="_blank"
+
+href="https://www.youtube.com/playlist?list=${item.id}"
+
+>
+
+Open Playlist
+
+</a>
+
+</div>
+
+</div>
+
+`;
+
+    }
+
+    /* =====================================================
+       LOAD SHORTS
+    ===================================================== */
+
+    async loadShorts() {
+
+        const cache = this.getCache("shorts");
+
+        if (cache) {
+
+            this.shorts = cache;
+
+            this.renderShorts();
+
+            return;
+
+        }
+
+        const search = await this.request(
+
+            "/search",
+
+            {
+
+                part: "snippet",
+
+                channelId: this.channelId,
+
+                order: "date",
+
+                type: "video",
+
+                maxResults: 50
+
+            }
+
+        );
+
+        const ids = search.items
+
+            .map(item => item.id.videoId)
+
+            .join(",");
+
+        const details = await this.request(
+
+            "/videos",
+
+            {
+
+                part:
+
+                "snippet,contentDetails,statistics",
+
+                id: ids
+
+            }
+
+        );
+
+        this.shorts = details.items.filter(
+
+            video => this.isShort(video)
+
+        );
+
+        this.setCache(
+
+            "shorts",
+
+            this.shorts,
+
+            CONFIG.CACHE.SHORTS
+
+        );
+
+        this.renderShorts();
+
+    }
+
+    /* =====================================================
+       RENDER SHORTS
+    ===================================================== */
+
+    renderShorts() {
+
+        const container = document.querySelector(
+
+            "#shortsGrid"
+
+        );
+
+        if (!container) return;
+
+        container.innerHTML = "";
+
+        this.shorts.forEach(video => {
+
+            container.insertAdjacentHTML(
+
+                "beforeend",
+
+                this.shortCard(video)
+
+            );
+
+        });
+
+    }
+
+    /* =====================================================
+       SHORT CARD
+    ===================================================== */
+
+    shortCard(video) {
+
+        return `
+
+<div class="short-card reveal">
+
+<a
+href="https://www.youtube.com/watch?v=${video.id}"
+target="_blank">
+
+<img
+
+loading="lazy"
+
+src="${this.bestThumbnail(
+
+video.snippet.thumbnails
+
+)}"
+
+alt="${video.snippet.title}"
+
+>
+
+</a>
+
+<div class="short-info">
+
+<h3>
+
+${video.snippet.title}
+
+</h3>
+
+<span>
+
+👁 ${this.formatNumber(
+
+video.statistics.viewCount
+
+)}
+
+</span>
+
+</div>
+
+</div>
+
+`;
+
+    }
+
+    /* =====================================================
+       END PART 5
+    ===================================================== */
+
+    /* =====================================================
+       SHORTS DETECTION
+    ===================================================== */
+
+    isShort(video) {
+
+        if (!video.contentDetails) {
+
+            return false;
+
+        }
+
+        const duration = this.parseDuration(
+
+            video.contentDetails.duration
+
+        );
+
+        return duration <= 60;
+
+    }
+
+    /* =====================================================
+       ISO8601 DURATION PARSER
+    ===================================================== */
+
+    parseDuration(duration) {
+
+        const match = duration.match(
+
+            /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/
+
+        );
+
+        const hours = parseInt(match[1] || 0);
+
+        const minutes = parseInt(match[2] || 0);
+
+        const seconds = parseInt(match[3] || 0);
+
+        return (
+
+            hours * 3600 +
+
+            minutes * 60 +
+
+            seconds
+
+        );
+
+    }
+
+    /* =====================================================
+       FORMAT DURATION
+    ===================================================== */
+
+    formatDuration(duration) {
+
+        const total = this.parseDuration(duration);
+
+        const hours = Math.floor(total / 3600);
+
+        const minutes = Math.floor(
+
+            (total % 3600) / 60
+
+        );
+
+        const seconds = total % 60;
+
+        if (hours > 0) {
+
+            return (
+
+                String(hours).padStart(2, "0") +
+
+                ":" +
+
+                String(minutes).padStart(2, "0") +
+
+                ":" +
+
+                String(seconds).padStart(2, "0")
+
+            );
+
+        }
+
+        return (
+
+            String(minutes).padStart(2, "0") +
+
+            ":" +
+
+            String(seconds).padStart(2, "0")
+
+        );
+
+    }
+
+    /* =====================================================
+       SHOW ERROR
+    ===================================================== */
+
+    showError(message) {
+
+        console.error(
+
+            "[YouTube]",
+
+            message
+
+        );
+
+        const error = document.querySelector(
+
+            "#youtubeError"
+
+        );
+
+        if (error) {
+
+            error.textContent = message;
+
+            error.classList.add("show");
+
+        }
+
+    }
+
+    /* =====================================================
+       REFRESH DATA
+    ===================================================== */
+
+    async refresh() {
+
+        this.clearCache();
+
+        await this.bootstrap();
+
+    }
+
+    /* =====================================================
+       DESTROY
+    ===================================================== */
+
+    destroy() {
+
+        this.clearCache();
+
+        this.channel = null;
+
+        this.live = null;
+
+        this.videos = [];
+
+        this.playlists = [];
+
+        this.shorts = [];
+
+        this.initialized = false;
+
+    }
+
+}
+
+/* ==========================================================
+   GLOBAL INSTANCE
+========================================================== */
+
+const YouTube = new YouTubeAPI();
+
+/* ==========================================================
+   AUTO START
+========================================================== */
+
+document.addEventListener(
+
+    "DOMContentLoaded",
+
+    async () => {
+
+        try {
+
+            await YouTube.init();
+
+            if (
+
+                typeof APP !== "undefined" &&
+
+                APP.finishLoading
+
+            ) {
+
+                APP.finishLoading();
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+);
+
+/* ==========================================================
+   GLOBAL ACCESS
+========================================================== */
+
+window.YouTube = YouTube;
+
+/* ==========================================================
+   END OF FILE
+========================================================== */
